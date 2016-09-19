@@ -41,6 +41,10 @@ A default styling sheet, `style.css`, will be used to provide some default styli
 
 The primary technical challenge will be becoming familiar with the Twilio IP Messaging service and learning how properly setup chat channels across multiple sessions.
 
+## Wireframe
+
+![chat_window](chat_window_wireframe.png)
+
 ## Implementation Timeline
 
 #### Day 1:

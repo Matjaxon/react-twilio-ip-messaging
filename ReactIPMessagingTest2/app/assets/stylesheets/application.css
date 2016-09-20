@@ -1,0 +1,62 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+.channel-user-chat-container {
+  font-family: arial, sans-serif;
+  position: relative;
+  display: flex;
+  border: 1px solid black;
+  display: block;
+  height: 300px;
+  width: 500px;
+  box-sizing: border-box;
+}
+
+.channel-user-chat-window {
+  border: 1px solid orange;
+  flex-grow: 1;
+  height: 90%;
+  box-sizing: border-box;
+}
+
+.channel-user-input-container {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.channel-user-chat-input {
+  height: 30px;
+  width: 80%;
+  box-sizing: border-box;
+  resize: none;
+}
+
+.channel-user-chat-send-button {
+  border: 1px solid gray;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: 20%;
+  height: 30px;
+  padding: 5px;
+  box-sizing: border-box;
+  text-align: center;
+  background-color: #1a1aff;
+  color: white;
+  cursor: pointer;
+}

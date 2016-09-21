@@ -14,15 +14,25 @@
  *= require_self
  */
 
+.active-chat-container {
+  display: flex;
+  border: 1px solid #0d122b;
+  width: 600px;
+}
+
+.active-channel-manager {
+  width: 100px;
+}
+
 .channel-user-chat-container {
-  font-family: arial, sans-serif;
+  font-family: helvetica, sans-serif;
+  border-left: 1px solid #e6e6e6;
   position: relative;
   display: flex;
-  border: 1px solid black;
   display: block;
   width: 500px;
   box-sizing: border-box;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .channel-user-channel-name-container {
@@ -30,11 +40,12 @@
 }
 
 .channel-user-channel-name {
-  padding: 2px 5px;
-  font-variant: small-caps;
-  font-style: italic;
-  font-weight: bold;
-  background-color: #f5f5f5;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 200;
+  color: white;
+  background-color: #0d122b;
+  padding: 7px 10px;
 }
 
 .channel-user-chat-window {
@@ -50,11 +61,11 @@
   display: flex;
   flex-direction: row;
   width: 100%;
-  border-top: 1px solid black;
+  border-top: 1px solid #e6e6e6;
   padding: 10px;
   box-sizing: border-box;
   align-items: center;
-  background-color: #f5f5f5;
+  background-color: #e6e6e6;
 }
 
 .channel-user-chat-input {
@@ -70,7 +81,7 @@
 .channel-user-chat-send-button {
   height: 30px;
   box-sizing: border-box;
-  background-color: #1a1aff;
+  background-color: #008cff;
   border-radius: 5px;
   padding: 7px 20px 5px 20px;
   margin: 0px 5px;

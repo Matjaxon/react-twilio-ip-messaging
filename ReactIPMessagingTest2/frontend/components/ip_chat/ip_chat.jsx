@@ -94,7 +94,7 @@ class ChannelUser extends React.Component {
     } else {
       channelName = (
         <div className="channel-user-channel-name">
-          {`Name loading...`}
+          {`Loading...`}
         </div>
       );
     }
@@ -113,29 +113,31 @@ class ChannelUser extends React.Component {
     } else {
       chatMessages = (
         <div className="channel-user-chat-window">
-          {'Messages loading...'}
+          {'Loading...'}
         </div>
       );
     }
     return (
-      <div className="channel-user-chat-container">
-        <div className="channel-user-channel-name-container">{channelName}</div>
-        <div className="channel-user-chat-window">
-          {chatMessages}
+      <div className="active-chat-container">
+        <div className="active-channel-manager">
+          Channels List
         </div>
-        <div className="channel-user-input-container">
-          <textarea className="channel-user-chat-input"
-            onChange={this._handleChange('currentMessage')}
-            value={this.state.currentMessage || ""}>
-          </textarea>
-          <div className="channel-user-chat-send-button"
-            onClick={this._sendMessage}>Send</div>
+        <div className="channel-user-chat-container">
+          <div className="channel-user-channel-name-container">{channelName}</div>
+          <div className="channel-user-chat-window">
+            {chatMessages}
+          </div>
+          <div className="channel-user-input-container">
+            <textarea className="channel-user-chat-input"
+              onChange={this._handleChange('currentMessage')}
+              value={this.state.currentMessage || ""}>
+            </textarea>
+            <div className="channel-user-chat-send-button"
+              onClick={this._sendMessage}>Send</div>
+          </div>
         </div>
       </div>
     );
   }
 }
-
-
-
  export default ChannelUser;

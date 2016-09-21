@@ -21452,6 +21452,10 @@
 	
 	var _ip_chat2 = _interopRequireDefault(_ip_chat);
 	
+	var _ip_chat_client = __webpack_require__(175);
+	
+	var _ip_chat_client2 = _interopRequireDefault(_ip_chat_client);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21476,9 +21480,11 @@
 	      return _react2.default.createElement(
 	        'div',
 	        null,
-	        _react2.default.createElement(_ip_chat2.default, { device: 'browser',
+	        _react2.default.createElement(_ip_chat_client2.default, {
+	          device: 'browser',
 	          tokenUrl: 'api/token',
-	          channelSID: 'CH32aa9c46590e41a088a4e86f6c4d48d5' })
+	          channelSID: 'CH32aa9c46590e41a088a4e86f6c4d48d5'
+	        })
 	      );
 	    }
 	  }]);
@@ -21634,7 +21640,7 @@
 	        channelName = _react2.default.createElement(
 	          'div',
 	          { className: 'channel-user-channel-name' },
-	          'Name loading...'
+	          'Loading...'
 	        );
 	      }
 	
@@ -21653,33 +21659,42 @@
 	        chatMessages = _react2.default.createElement(
 	          'div',
 	          { className: 'channel-user-chat-window' },
-	          'Messages loading...'
+	          'Loading...'
 	        );
 	      }
 	      return _react2.default.createElement(
 	        'div',
-	        { className: 'channel-user-chat-container' },
+	        { className: 'active-chat-container' },
 	        _react2.default.createElement(
 	          'div',
-	          { className: 'channel-user-channel-name-container' },
-	          channelName
+	          { className: 'active-channel-manager' },
+	          'Channels List'
 	        ),
 	        _react2.default.createElement(
 	          'div',
-	          { className: 'channel-user-chat-window' },
-	          chatMessages
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'channel-user-input-container' },
-	          _react2.default.createElement('textarea', { className: 'channel-user-chat-input',
-	            onChange: this._handleChange('currentMessage'),
-	            value: this.state.currentMessage || "" }),
+	          { className: 'channel-user-chat-container' },
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'channel-user-chat-send-button',
-	              onClick: this._sendMessage },
-	            'Send'
+	            { className: 'channel-user-channel-name-container' },
+	            channelName
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'channel-user-chat-window' },
+	            chatMessages
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'channel-user-input-container' },
+	            _react2.default.createElement('textarea', { className: 'channel-user-chat-input',
+	              onChange: this._handleChange('currentMessage'),
+	              value: this.state.currentMessage || "" }),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'channel-user-chat-send-button',
+	                onClick: this._sendMessage },
+	              'Send'
+	            )
 	          )
 	        )
 	      );
@@ -21743,6 +21758,109 @@
 	};
 	
 	exports.default = IPMessage;
+
+/***/ },
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(34);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+	
+	var _ip_chat = __webpack_require__(173);
+	
+	var _ip_chat2 = _interopRequireDefault(_ip_chat);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	function refreshToken(accessManager, url, device) {
+	  $.ajax({
+	    method: "GET",
+	    url: url,
+	    data: { device: device },
+	    success: function success(data) {
+	      accessManager.updateToken(data.token);
+	    }
+	  });
+	}
+	
+	//expected props are token, url, device to refresh token.
+	
+	var IPChatClient = function (_React$Component) {
+	  _inherits(IPChatClient, _React$Component);
+	
+	  function IPChatClient(props) {
+	    _classCallCheck(this, IPChatClient);
+	
+	    var _this = _possibleConstructorReturn(this, (IPChatClient.__proto__ || Object.getPrototypeOf(IPChatClient)).call(this, props));
+	
+	    _this.token = props.token;
+	    _this.tokenUrl = props.tokenUrl;
+	    _this.device = props.device || "browser"; // default to "browser"
+	
+	    _this.state = {};
+	    return _this;
+	  }
+	
+	  _createClass(IPChatClient, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      var chatClient = this;
+	      $.ajax({
+	        method: "GET",
+	        url: chatClient.tokenUrl,
+	        data: { device: chatClient.device },
+	        success: function success(data) {
+	          var accessManager = new Twilio.AccessManager(data.token);
+	          var messagingClient = new Twilio.IPMessaging.Client(accessManager);
+	          messagingClient.on('tokenExpired', function () {
+	            return refreshToken(accessManager, chatClient.tokenUrl, chatClient.device);
+	          });
+	          chatClient.setState({
+	            accessManager: accessManager,
+	            messagingClient: messagingClient
+	          });
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        'Channel Manager goes here',
+	        _react2.default.createElement(_ip_chat2.default, {
+	          device: 'browser',
+	          tokenUrl: 'api/token',
+	          channelSID: 'CH32aa9c46590e41a088a4e86f6c4d48d5'
+	        })
+	      );
+	    }
+	  }]);
+	
+	  return IPChatClient;
+	}(_react2.default.Component);
+	
+	exports.default = IPChatClient;
 
 /***/ }
 /******/ ]);

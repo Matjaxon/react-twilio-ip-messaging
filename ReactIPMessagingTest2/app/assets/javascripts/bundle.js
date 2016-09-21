@@ -21476,10 +21476,9 @@
 	      return _react2.default.createElement(
 	        'div',
 	        null,
-	        'App Level',
 	        _react2.default.createElement(_ip_chat2.default, { device: 'browser',
 	          tokenUrl: 'api/token',
-	          channelSID: 'CH1d9bf2979c4a40709e18c47e839b18bf' })
+	          channelSID: 'CH32aa9c46590e41a088a4e86f6c4d48d5' })
 	      );
 	    }
 	  }]);
@@ -21493,7 +21492,7 @@
 /* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -21505,7 +21504,13 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _ip_message = __webpack_require__(174);
+	
+	var _ip_message2 = _interopRequireDefault(_ip_message);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -21513,6 +21518,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
+	// HUGE issue with getting token refreshed, at least while at a/A
 	function refreshToken(accessManager, url, device) {
 	  $.ajax({
 	    method: "GET",
@@ -21536,65 +21542,144 @@
 	    _this.device = props.device;
 	    _this.tokenUrl = props.tokenUrl;
 	    _this.channelSID = props.channelSID;
+	
+	    _this._sendMessage = _this._sendMessage.bind(_this);
+	    _this._handleChange = _this._handleChange.bind(_this);
+	    _this._scrollToBottom = _this._scrollToBottom.bind(_this);
 	    return _this;
 	  }
 	
 	  _createClass(ChannelUser, [{
-	    key: "componentWillMount",
+	    key: 'componentWillMount',
 	    value: function componentWillMount() {
-	      var _this2 = this;
-	
+	      var chat = this;
 	      $.ajax({
 	        method: "GET",
-	        url: this.tokenUrl,
-	        data: { device: this.device },
+	        url: chat.tokenUrl,
+	        data: { device: chat.device },
 	        success: function success(data) {
 	          var accessManager = new Twilio.AccessManager(data.token);
 	          var messagingClient = new Twilio.IPMessaging.Client(accessManager);
 	          messagingClient.on('tokenExpired', function () {
-	            return refreshToken(accessManager, _this2.tokenUrl, _this2.device);
+	            return refreshToken(accessManager, chat.tokenUrl, chat.device);
 	          });
-	          _this2.setState({
-	            identity: data.identity,
-	            token: data.token,
-	            accessManager: accessManager,
-	            messagingClient: messagingClient
-	          }, function () {
-	            return console.log(_this2.state);
+	          messagingClient.getChannelBySid(chat.channelSID).then(function (channel) {
+	            channel.join().then(function (session) {
+	              channel.getMessages().then(function (messages) {
+	                channel.on('messageAdded', function () {
+	                  channel.getMessages().then(function (newMessages) {
+	                    chat.setState({ messages: newMessages }, function () {
+	                      return console.log(chat.state);
+	                    });
+	                  });
+	                });
+	                chat.setState({
+	                  identity: data.identity,
+	                  token: data.token,
+	                  accessManager: accessManager,
+	                  messagingClient: messagingClient,
+	                  channel: channel,
+	                  messages: messages
+	                }, function () {
+	                  return console.log(chat.state);
+	                });
+	              });
+	            });
 	          });
 	        }
 	      });
 	    }
 	  }, {
-	    key: "render",
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate() {
+	      this._scrollToBottom();
+	    }
+	  }, {
+	    key: '_handleChange',
+	    value: function _handleChange(key) {
+	      var _this2 = this;
+	
+	      return function (event) {
+	        return _this2.setState(_defineProperty({}, key, event.target.value));
+	      };
+	    }
+	  }, {
+	    key: '_sendMessage',
+	    value: function _sendMessage(event) {
+	      event.preventDefault();
+	      if (this.state.currentMessage.length > 0) {
+	        this.state.channel.sendMessage(this.state.currentMessage);
+	        this.setState({ currentMessage: "" });
+	      }
+	    }
+	  }, {
+	    key: '_scrollToBottom',
+	    value: function _scrollToBottom() {
+	      var chatWindows = Array.from(document.getElementsByClassName("channel-user-chat-window"));
+	      chatWindows.forEach(function (chatWindow) {
+	        chatWindow.scrollTop = chatWindow.scrollHeight;
+	      });
+	    }
+	  }, {
+	    key: 'render',
 	    value: function render() {
-	      if (this.state.messagingClient) {
-	        this.state.messagingClient.getChannels().then(function (channels) {
-	          var channel = channels[0];
-	          channel.join();
-	          console.log(channel);
-	          console.log("Joined " + channel.friendlyName);
-	          // debugger;
+	      var channelName = void 0;
+	      if (this.state.channel) {
+	        channelName = _react2.default.createElement(
+	          'div',
+	          { className: 'channel-user-channel-name' },
+	          this.state.channel.friendlyName
+	        );
+	      } else {
+	        channelName = _react2.default.createElement(
+	          'div',
+	          { className: 'channel-user-channel-name' },
+	          'Name loading...'
+	        );
+	      }
+	
+	      var messages = this.state.messages;
+	      var chatMessages = void 0;
+	      if (messages) {
+	        chatMessages = messages.map(function (message) {
+	          return _react2.default.createElement(_ip_message2.default, {
+	            author: message.author,
+	            body: message.body,
+	            timestamp: message.timestamp,
+	            key: message.sid
+	          });
 	        });
-	        // debugger;
-	        // console.log(channels);
+	      } else {
+	        chatMessages = _react2.default.createElement(
+	          'div',
+	          { className: 'channel-user-chat-window' },
+	          'Messages loading...'
+	        );
 	      }
 	      return _react2.default.createElement(
-	        "div",
-	        { className: "channel-user-chat-container" },
+	        'div',
+	        { className: 'channel-user-chat-container' },
 	        _react2.default.createElement(
-	          "div",
-	          { className: "channel-user-chat-window" },
-	          this.state.token ? this.state.token : '...loading'
+	          'div',
+	          { className: 'channel-user-channel-name-container' },
+	          channelName
 	        ),
 	        _react2.default.createElement(
-	          "div",
-	          { className: "channel-user-input-container" },
-	          _react2.default.createElement("textarea", { className: "channel-user-chat-input" }),
+	          'div',
+	          { className: 'channel-user-chat-window' },
+	          chatMessages
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'channel-user-input-container' },
+	          _react2.default.createElement('textarea', { className: 'channel-user-chat-input',
+	            onChange: this._handleChange('currentMessage'),
+	            value: this.state.currentMessage || "" }),
 	          _react2.default.createElement(
-	            "div",
-	            { className: "channel-user-chat-send-button" },
-	            "Send"
+	            'div',
+	            { className: 'channel-user-chat-send-button',
+	              onClick: this._sendMessage },
+	            'Send'
 	          )
 	        )
 	      );
@@ -21605,6 +21690,59 @@
 	}(_react2.default.Component);
 	
 	exports.default = ChannelUser;
+
+/***/ },
+/* 174 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var IPMessage = function IPMessage(_ref) {
+	  var author = _ref.author;
+	  var body = _ref.body;
+	  var timestamp = _ref.timestamp;
+	
+	  var timeString = timestamp.toLocaleTimeString([], {
+	    hour: '2-digit',
+	    minute: '2-digit'
+	  });
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'chat-message-container' },
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'chat-message-header' },
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'chat-message-author' },
+	        author
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'chat-message-timestamp' },
+	        ' - ' + timeString
+	      )
+	    ),
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'chat-message-body' },
+	      body
+	    )
+	  );
+	};
+	
+	exports.default = IPMessage;
 
 /***/ }
 /******/ ]);

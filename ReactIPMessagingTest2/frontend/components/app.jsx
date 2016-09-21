@@ -10,10 +10,9 @@ class App extends React.Component {
 
     return (
       <div>
-        App Level
         <ChannelUser device="browser"
           tokenUrl="api/token"
-          channelSID="CH1d9bf2979c4a40709e18c47e839b18bf" />
+          channelSID="CH32aa9c46590e41a088a4e86f6c4d48d5" />
       </div>
     );
   }

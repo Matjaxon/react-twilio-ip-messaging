@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ChannelUser from './ip_chat';
+import IPChatChannelManager from './ip_chat_channel_manager';
 
 function refreshToken(accessManager, url, device) {
   $.ajax({
@@ -13,7 +14,7 @@ function refreshToken(accessManager, url, device) {
   });
 }
 
-//expected props are token, url, device to refresh token.
+//expected props are token, url, and device to refresh token.
 class IPChatClient extends React.Component {
   constructor(props) {
     super(props);
@@ -46,16 +47,19 @@ class IPChatClient extends React.Component {
   }
 
   render() {
-    return (
-      <div>
-        Channel Manager goes here
-        <ChannelUser
-          device="browser"
-          tokenUrl="api/token"
-          channelSID="CH32aa9c46590e41a088a4e86f6c4d48d5"
-        />
-      </div>
-    );
+    if (this.state.messagingClient) {
+      return (
+        <div>
+          <IPChatChannelManager
+            messagingClient={this.state.messagingClient}
+          />
+        </div>
+      );
+    } else {
+      return (
+        <div>Loading...</div>
+      );
+    }
   }
 }
 

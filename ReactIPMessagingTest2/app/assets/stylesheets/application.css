@@ -18,10 +18,32 @@
   display: flex;
   border: 1px solid #0d122b;
   width: 600px;
+  font-family: helvetica, sans-serif;
+  box-sizing: border-box;
 }
 
 .active-channel-manager {
   width: 100px;
+  background-color: #f6f6f6;
+}
+
+.channel-manager-channel-name {
+  padding: 5px 10px 5px 15px;
+  width: 100px;
+  border-bottom: 1px solid #e6e6e6;
+  border-left: 0px solid transparent;
+  font-size: 0.8em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  box-sizing: border-box;
+  white-space:nowrap;
+  text-transform: lowercase;
+}
+
+.channel-manager-channel-name:hover {
+  border-left: 5px solid #c41025;
+  color: #c41025;
 }
 
 .channel-user-chat-container {
@@ -32,7 +54,7 @@
   display: block;
   width: 500px;
   box-sizing: border-box;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .channel-user-channel-name-container {
@@ -54,7 +76,7 @@
   height: 250px;
   box-sizing: border-box;
   overflow-y: scroll;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .channel-user-input-container {
@@ -65,7 +87,7 @@
   padding: 10px;
   box-sizing: border-box;
   align-items: center;
-  background-color: #e6e6e6;
+  background-color: #f6f6f6;
 }
 
 .channel-user-chat-input {
@@ -104,10 +126,6 @@
   font-weight: bold;
   font-style: italic;
 }
-
-/*.chat-message-author::after {
-  content: ":";
-}*/
 
 .chat-messsage-timestamp::before {
   content: " - ";

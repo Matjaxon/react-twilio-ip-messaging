@@ -2,7 +2,7 @@ class Api::IpMessagingController < ApplicationController
 
   def token
     device_id = params['device']
-    identity = Faker::Internet.user_name
+    identity = current_user.username
 
     endpoint_id = "ReactIPMessagingTest:#{identity}:#{device_id}"
 
@@ -16,6 +16,7 @@ class Api::IpMessagingController < ApplicationController
     token.add_grant grant
 
     # Generate the token and send to client
+    p identity
     render json: {identity: identity, token: token.to_jwt}, status: 200
   end
 

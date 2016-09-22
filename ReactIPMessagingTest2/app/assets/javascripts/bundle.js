@@ -21475,6 +21475,7 @@
 	    _this.state = {};
 	
 	    _this._loginAsMatt = _this._loginAsMatt.bind(_this);
+	    _this._loginAsBilly = _this._loginAsBilly.bind(_this);
 	    return _this;
 	  }
 	
@@ -21499,6 +21500,26 @@
 	      });
 	    }
 	  }, {
+	    key: '_loginAsBilly',
+	    value: function _loginAsBilly(event) {
+	      event.preventDefault();
+	      console.log("clicked");
+	      var app = this;
+	      $.ajax({
+	        method: "POST",
+	        url: "api/session",
+	        data: {
+	          user: {
+	            username: "billy",
+	            password: "password"
+	          }
+	        },
+	        success: function success(data) {
+	          return app.setState({ currentUser: data });
+	        }
+	      });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      if (!this.state.currentUser) {
@@ -21514,6 +21535,11 @@
 	            'button',
 	            { onClick: this._loginAsMatt },
 	            'Login as Matt'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this._loginAsBilly },
+	            'Login as Billy'
 	          )
 	        );
 	      } else {
@@ -21572,7 +21598,9 @@
 	
 	    var _this = _possibleConstructorReturn(this, (ChannelUser.__proto__ || Object.getPrototypeOf(ChannelUser)).call(this, props));
 	
-	    _this.state = {};
+	    _this.state = {
+	      messages: _this.props.messages
+	    };
 	    _this.channel = props.channel;
 	    _this.channelName = props.channel.friendlyName;
 	
@@ -21587,20 +21615,18 @@
 	    value: function componentWillMount() {
 	      var channel = this.channel;
 	      var chatChannel = this;
+	
 	      channel.join().then(function (session) {
 	        channel.getMessages().then(function (messages) {
-	          channel.on('messageAdded', function () {
-	            channel.getMessages().then(function (newMessages) {
-	              chatChannel.setState({ messages: newMessages }, function () {
-	                return console.log(chatChannel.state);
-	              });
-	            });
-	          });
 	          chatChannel.setState({
 	            messages: messages
-	          }, function () {
-	            return console.log(chatChannel.state);
 	          });
+	        });
+	      });
+	
+	      channel.on('messageAdded', function () {
+	        channel.getMessages().then(function (newMessages) {
+	          chatChannel.setState({ messages: newMessages });
 	        });
 	      });
 	    }
@@ -21638,7 +21664,6 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	
 	      var messages = this.state.messages;
 	      var chatMessages = void 0;
 	      if (messages) {
@@ -21653,7 +21678,7 @@
 	      } else {
 	        chatMessages = _react2.default.createElement(
 	          'div',
-	          { className: 'channel-user-chat-window' },
+	          null,
 	          'Loading...'
 	        );
 	      }
@@ -21850,7 +21875,7 @@
 	      } else {
 	        return _react2.default.createElement(
 	          'div',
-	          null,
+	          { className: 'client-loading' },
 	          'Loading...'
 	        );
 	      }
@@ -21902,6 +21927,8 @@
 	    _this.state = {};
 	
 	    _this._loadChannelList = _this._loadChannelList.bind(_this);
+	    _this._fetchMessages = _this._fetchMessages.bind(_this);
+	    _this._changeChannel = _this._changeChannel.bind(_this);
 	    return _this;
 	  }
 	
@@ -21917,20 +21944,58 @@
 	
 	      var messagingClient = this.messagingClient;
 	      messagingClient.getChannels().then(function (channels) {
-	        _this2.setState({ channels: channels });
+	        var channelsHash = {};
+	        channels.forEach(function (channel) {
+	          channelsHash[channel.uniqueName] = channel;
+	        });
+	        _this2.setState({ channels: channelsHash });
+	        _this2._fetchMessages(channels);
 	      });
+	    }
+	  }, {
+	    key: '_fetchMessages',
+	    value: function _fetchMessages(channels) {
+	      var channelManager = this;
+	      var messages = {};
+	      channels.forEach(function (channel) {
+	        channel.on('messageAdded', function () {
+	          channel.getMessages().then(function (newMessages) {
+	            var allMessages = Object.assign({}, channelManager.state.messages);
+	            allMessages[channel.uniqueName] = newMessages;
+	            channelManager.setState({ messages: allMessages });
+	          });
+	        });
+	        channel.getMessages().then(function (channelMessages) {
+	          messages[channel.uniqueName] = channelMessages;
+	        });
+	      });
+	      this.setState({ messages: messages, activeChannel: channels[0] });
+	    }
+	  }, {
+	    key: '_changeChannel',
+	    value: function _changeChannel(uniqueName) {
+	      var channel = this.state.channels[uniqueName];
+	      this.setState({ activeChannel: channel });
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var _this3 = this;
+	
 	      var channelNames = void 0;
 	      if (this.state.channels) {
-	        channelNames = this.state.channels.map(function (channel) {
+	        var channelKeys = Object.keys(this.state.channels);
+	        channelNames = channelKeys.map(function (channelKey) {
+	          var channel = _this3.state.channels[channelKey];
+	          var activeStatus = _this3.state.activeChannel === channel ? " active-channel-name" : "";
 	          return _react2.default.createElement(
 	            'div',
 	            {
-	              className: 'channel-manager-channel-name',
-	              key: channel.sid },
+	              className: 'channel-manager-channel-name' + activeStatus,
+	              key: channel.sid,
+	              onClick: function onClick() {
+	                return _this3._changeChannel(channel.uniqueName);
+	              } },
 	            _react2.default.createElement(
 	              'span',
 	              { className: 'channel-name-text' },
@@ -21946,13 +22011,16 @@
 	        );
 	      }
 	
-	      var chatChannels = void 0;
-	      if (this.state.channels) {
-	        chatChannels = this.state.channels.map(function (channel) {
-	          return _react2.default.createElement(_ip_chat2.default, { key: channel.sid, channel: channel });
+	      var activeChat = void 0;
+	      if (this.state.activeChannel) {
+	        var activeChannel = this.state.activeChannel;
+	        activeChat = _react2.default.createElement(_ip_chat2.default, {
+	          key: activeChannel.sid,
+	          channel: activeChannel,
+	          messages: this.state.messages[activeChannel.uniqueName]
 	        });
 	      } else {
-	        chatChannels = _react2.default.createElement(
+	        activeChat = _react2.default.createElement(
 	          'div',
 	          null,
 	          'Loading...'
@@ -21967,7 +22035,7 @@
 	          { className: 'active-channel-manager' },
 	          channelNames
 	        ),
-	        chatChannels
+	        activeChat
 	      );
 	    }
 	  }]);

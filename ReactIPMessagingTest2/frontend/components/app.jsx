@@ -8,6 +8,7 @@ class App extends React.Component {
     this.state = {};
 
     this._loginAsMatt = this._loginAsMatt.bind(this);
+    this._loginAsBilly = this._loginAsBilly.bind(this);
   }
 
   _loginAsMatt(event) {
@@ -27,6 +28,23 @@ class App extends React.Component {
     });
   }
 
+  _loginAsBilly(event) {
+    event.preventDefault();
+    console.log("clicked");
+    let app = this;
+    $.ajax({
+      method: "POST",
+      url: "api/session",
+      data: {
+        user: {
+          username: "billy",
+          password: "password"
+        }
+      },
+      success: (data) => app.setState({currentUser: data})
+    });
+  }
+
   render() {
     if (!this.state.currentUser) {
       return (
@@ -34,6 +52,9 @@ class App extends React.Component {
           <div>Log in to chat</div>
           <button onClick={this._loginAsMatt}>
             Login as Matt
+          </button>
+          <button onClick={this._loginAsBilly}>
+            Login as Billy
           </button>
         </div>
       );

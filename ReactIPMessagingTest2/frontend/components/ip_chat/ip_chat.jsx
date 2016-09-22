@@ -4,7 +4,9 @@ import IPMessage from './ip_message';
 class ChannelUser extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      messages: this.props.messages
+    };
     this.channel = props.channel;
     this.channelName = props.channel.friendlyName;
 
@@ -16,16 +18,18 @@ class ChannelUser extends React.Component {
   componentWillMount() {
     let channel = this.channel;
     let chatChannel = this;
+
     channel.join().then( (session) => {
       channel.getMessages().then(messages => {
-        channel.on('messageAdded', () => {
-          channel.getMessages().then(newMessages => {
-            chatChannel.setState({messages: newMessages}, () => console.log(chatChannel.state));
-          });
-        });
         chatChannel.setState({
           messages
-        }, () => console.log(chatChannel.state));
+        });
+      });
+    });
+
+    channel.on('messageAdded', () => {
+      channel.getMessages().then(newMessages => {
+        chatChannel.setState({messages: newMessages});
       });
     });
   }
@@ -54,7 +58,6 @@ class ChannelUser extends React.Component {
   }
 
   render() {
-
     let messages = this.state.messages;
     let chatMessages;
     if(messages) {
@@ -67,11 +70,7 @@ class ChannelUser extends React.Component {
         />;
       });
     } else {
-      chatMessages = (
-        <div className="channel-user-chat-window">
-          {'Loading...'}
-        </div>
-      );
+      chatMessages = <div>Loading...</div>;
     }
 
     return (

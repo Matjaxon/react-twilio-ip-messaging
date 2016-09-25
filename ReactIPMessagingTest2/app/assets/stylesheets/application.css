@@ -17,7 +17,7 @@
 .active-chat-container {
   display: flex;
   border: 1px solid #0d122b;
-  width: 600px;
+  width: 450px;
   font-family: helvetica, sans-serif;
   box-sizing: border-box;
 }
@@ -59,7 +59,7 @@
 }
 
 .channel-names-container {
-  height: 270px;
+  height: 200px;
   box-sizing: border-box;
 }
 
@@ -93,16 +93,19 @@
   position: relative;
   display: flex;
   display: block;
-  width: 500px;
+  width: 325px;
   box-sizing: border-box;
   font-size: 12px;
 }
 
 .channel-user-channel-name-container {
+  display: flex;
+  justify-content: space-between;
   border-bottom: 1px solid black;
 }
 
 .channel-user-channel-name {
+  flex-grow: 1;
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: 200;
@@ -181,11 +184,11 @@
   padding-left: 3px;
 }
 
-.add-channel-container {
+.add-channel-container, .add-member-container {
   display: flex;
 }
 
-.add-channel-input {
+.add-channel-input, .add-member-input {
   font-size: 0.7em;
   width: 80px;
   padding: 5px 4px;
@@ -193,7 +196,7 @@
   margin-right: 3px;
 }
 
-.add-channel-button {
+.add-channel-button, .add-member-button {
   height: 18px;
   width: 18px;
   border-radius: 25px;
@@ -202,4 +205,9 @@
   text-align: center;
   line-height: 1;
   cursor: pointer;
+}
+
+.add-member-container {
+  background: #0d122b;
+  padding: 3px;
 }

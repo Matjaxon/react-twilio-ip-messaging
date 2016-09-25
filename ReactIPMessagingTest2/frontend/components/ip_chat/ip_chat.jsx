@@ -1,5 +1,6 @@
 import React from 'react';
 import IPMessage from './ip_message';
+import InviteMember from './invite_member';
 
 class ChannelUser extends React.Component {
   constructor(props) {
@@ -28,6 +29,7 @@ class ChannelUser extends React.Component {
     this._handleChange = this._handleChange.bind(this);
     this._scrollToBottom = this._scrollToBottom.bind(this);
     this._fetchMessages = this._fetchMessages.bind(this);
+    this._inviteMember = this._inviteMember.bind(this);
     this._setupEventListenersFromProps = this._setupEventListenersFromProps.bind(this);
 
     /*
@@ -105,6 +107,11 @@ class ChannelUser extends React.Component {
     });
   }
 
+  _inviteMember(identity) {
+    debugger;
+    this.channel.invite(identity);
+  }
+
   render() {
     let messages = this.state.messages;
     let chatMessages;
@@ -127,6 +134,7 @@ class ChannelUser extends React.Component {
           <div className="channel-user-channel-name">
             {this.channelName}
           </div>
+          <InviteMember inviteMember={this._inviteMember}/>
         </div>
         <div className="channel-user-chat-window">
           {chatMessages}

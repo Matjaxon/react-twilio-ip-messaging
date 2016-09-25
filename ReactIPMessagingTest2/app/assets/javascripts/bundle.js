@@ -21578,6 +21578,10 @@
 	
 	var _ip_message2 = _interopRequireDefault(_ip_message);
 	
+	var _invite_member = __webpack_require__(178);
+	
+	var _invite_member2 = _interopRequireDefault(_invite_member);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -21620,6 +21624,7 @@
 	    _this._handleChange = _this._handleChange.bind(_this);
 	    _this._scrollToBottom = _this._scrollToBottom.bind(_this);
 	    _this._fetchMessages = _this._fetchMessages.bind(_this);
+	    _this._inviteMember = _this._inviteMember.bind(_this);
 	    _this._setupEventListenersFromProps = _this._setupEventListenersFromProps.bind(_this);
 	
 	    /*
@@ -21708,6 +21713,12 @@
 	      });
 	    }
 	  }, {
+	    key: '_inviteMember',
+	    value: function _inviteMember(identity) {
+	      debugger;
+	      this.channel.invite(identity);
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var messages = this.state.messages;
@@ -21739,7 +21750,8 @@
 	            'div',
 	            { className: 'channel-user-channel-name' },
 	            this.channelName
-	          )
+	          ),
+	          _react2.default.createElement(_invite_member2.default, { inviteMember: this._inviteMember })
 	        ),
 	        _react2.default.createElement(
 	          'div',
@@ -21996,6 +22008,7 @@
 	    _this._fetchMessages = _this._fetchMessages.bind(_this);
 	    _this._changeChannel = _this._changeChannel.bind(_this);
 	    _this._addChannel = _this._addChannel.bind(_this);
+	    _this._listenForInvites = _this._listenForInvites.bind(_this);
 	    _this._subscribeChannel = _this._subscribeChannel.bind(_this);
 	    return _this;
 	  }
@@ -22003,6 +22016,7 @@
 	  _createClass(IPChatChannelManager, [{
 	    key: 'componentWillMount',
 	    value: function componentWillMount() {
+	      this._listenForInvites();
 	      this._loadChannelList();
 	    }
 	  }, {
@@ -22101,6 +22115,21 @@
 	        _this4._subscribeChannel(joinedChannel);
 	        _this4.setState({ channels: channels, activeChannel: newChannel });
 	      });
+	    }
+	  }, {
+	    key: '_listenForInvites',
+	    value: function _listenForInvites() {
+	      var _this5 = this;
+	
+	      debugger;
+	      this.messagingClient.on("channelInvited", function (channel) {
+	        _this5._acceptInvite(channel);
+	      });
+	    }
+	  }, {
+	    key: '_acceptInvite',
+	    value: function _acceptInvite(channel) {
+	      this._addChannel(channel);
 	    }
 	  }, {
 	    key: 'render',
@@ -22264,6 +22293,7 @@
 	          addString = addString + digit;
 	        }
 	        channelOptions.uniqueName = uniqueName + addString;
+	        this.setState({ channelName: "" });
 	        messagingClient.createChannel(channelOptions).then(function (newChannel) {
 	          _this3.addChannel(newChannel);
 	        });
@@ -22303,6 +22333,99 @@
 	}(_react2.default.Component);
 	
 	exports.default = AddChannel;
+
+/***/ },
+/* 178 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var InviteMember = function (_React$Component) {
+	  _inherits(InviteMember, _React$Component);
+	
+	  function InviteMember(props) {
+	    _classCallCheck(this, InviteMember);
+	
+	    var _this = _possibleConstructorReturn(this, (InviteMember.__proto__ || Object.getPrototypeOf(InviteMember)).call(this, props));
+	
+	    _this.inviteMember = props.inviteMember;
+	
+	    _this.state = {
+	      memberIdentity: ""
+	    };
+	
+	    _this._handleChange = _this._handleChange.bind(_this);
+	    _this._inviteMember = _this._inviteMember.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(InviteMember, [{
+	    key: "_handleChange",
+	    value: function _handleChange(key) {
+	      var _this2 = this;
+	
+	      return function (event) {
+	        _this2.setState(_defineProperty({}, key, event.target.value));
+	      };
+	    }
+	  }, {
+	    key: "_inviteMember",
+	    value: function _inviteMember(event) {
+	      event.preventDefault();
+	      var memberIdentity = this.state.memberIdentity;
+	      this.inviteMember(memberIdentity);
+	      this.setState({ memberIdentity: "" });
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      return _react2.default.createElement(
+	        "div",
+	        { className: "add-member-container" },
+	        _react2.default.createElement(
+	          "form",
+	          { onSubmit: this._inviteMember },
+	          _react2.default.createElement("input", { className: "add-member-input",
+	            placeholder: "Invite Member",
+	            onChange: this._handleChange("memberIdentity") }),
+	          _react2.default.createElement(
+	            "button",
+	            { className: "add-member-button" },
+	            _react2.default.createElement(
+	              "div",
+	              { className: "add-button-text" },
+	              "+"
+	            )
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return InviteMember;
+	}(_react2.default.Component);
+	
+	exports.default = InviteMember;
 
 /***/ }
 /******/ ]);

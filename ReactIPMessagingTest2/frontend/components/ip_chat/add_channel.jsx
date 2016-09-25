@@ -37,6 +37,7 @@ class AddChannel extends React.Component {
         addString = addString + digit;
       }
       channelOptions.uniqueName = uniqueName + addString;
+      this.setState({channelName: ""});
       messagingClient.createChannel(channelOptions).then(newChannel => {
         this.addChannel(newChannel);
       });

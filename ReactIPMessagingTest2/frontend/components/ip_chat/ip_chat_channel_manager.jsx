@@ -25,10 +25,12 @@ class IPChatChannelManager extends React.Component {
     this._fetchMessages = this._fetchMessages.bind(this);
     this._changeChannel = this._changeChannel.bind(this);
     this._addChannel = this._addChannel.bind(this);
+    this._listenForInvites = this._listenForInvites.bind(this);
     this._subscribeChannel = this._subscribeChannel.bind(this);
   }
 
   componentWillMount() {
+    this._listenForInvites();
     this._loadChannelList();
   }
 
@@ -118,6 +120,17 @@ class IPChatChannelManager extends React.Component {
       this._subscribeChannel(joinedChannel);
       this.setState({channels, activeChannel: newChannel});
     });
+  }
+
+  _listenForInvites() {
+    debugger;
+    this.messagingClient.on("channelInvited", (channel) => {
+      this._acceptInvite(channel);
+    });
+  }
+
+  _acceptInvite(channel) {
+    this._addChannel(channel);
   }
 
   render() {

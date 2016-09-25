@@ -1,0 +1,216 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+/*.active-chat-container {
+  display: flex;
+  border: 1px solid #0d122b;
+  width: 450px;
+  font-family: helvetica, sans-serif;
+  box-sizing: border-box;
+}*/
+
+/*.active-channel-manager {
+  display:flex;
+  flex-direction: column;
+  width: 125px;
+  background-color: #f6f6f6;
+}*/
+
+/*.channel-names-container {
+  min-height: 90%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}*/
+
+/*.channel-manager-channel-name {
+  display: flex;
+  padding: 5px;
+  width: 125px;
+  border-bottom: 1px solid #e6e6e6;
+  border-left: 0px solid transparent;
+  font-size: 0.7em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  box-sizing: border-box;
+  white-space:nowrap;
+  text-transform: lowercase;
+}*/
+
+// @import '../../frontend/components/ip_chat/ip_messaging_stylesheets.css';
+
+// .channel-manager-channel-name:hover {
+//   border-left: 5px solid #c41025;
+//   color: #c41025;
+// }
+// .channel-manager-channel-name:hover
+// .channel-name-unread-messages {
+//   background-color: #c41025;
+// }
+//
+// .channel-names-container {
+//   height: 200px;
+//   box-sizing: border-box;
+// }
+//
+// .channel-name-unread-messages-container {
+//   width: 15px;
+//   height: 15px;
+//   margin-right: 3px;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+// }
+//
+// .channel-name-unread-messages {
+//   font-size: 0.45em;
+//   background: #0d122b;
+//   border-radius: 25px;
+//   color: #f6f6f6;
+// }
+//
+// .channel-name-text {
+//   overflow: hidden;
+// }
+//
+// /*.active-channel-name {
+//   font-weight: bold;
+// }*/
+//
+// .channel-user-chat-container {
+//   font-family: helvetica, sans-serif;
+//   border-left: 1px solid #e6e6e6;
+//   position: relative;
+//   display: flex;
+//   display: block;
+//   width: 325px;
+//   box-sizing: border-box;
+//   font-size: 12px;
+// }
+//
+// .channel-user-channel-name-container {
+//   display: flex;
+//   justify-content: space-between;
+//   border-bottom: 1px solid black;
+// }
+//
+// .channel-user-channel-name {
+//   flex-grow: 1;
+//   text-transform: uppercase;
+//   letter-spacing: 1px;
+//   font-weight: 200;
+//   color: white;
+//   background-color: #0d122b;
+//   padding: 7px 10px;
+// }
+//
+// .channel-user-chat-window {
+//   border: 1px solid #f5f5f5;
+//   flex-grow: 1;
+//   height: 250px;
+//   min-height:250px;
+//   box-sizing: border-box;
+//   overflow-y: scroll;
+//   font-size: 12px;
+// }
+//
+// .channel-user-input-container {
+//   display: flex;
+//   flex-direction: row;
+//   width: 100%;
+//   border-top: 1px solid #e6e6e6;
+//   padding: 5px 10px;
+//   box-sizing: border-box;
+//   align-items: center;
+//   background-color: #f6f6f6;
+// }
+//
+// .channel-user-chat-input {
+//   border: 1px solid #bababa;
+//   margin: 0px 5px;
+//   height: 30px;
+//   width: 80%;
+//   box-sizing: border-box;
+//   resize: none;
+//   border-radius: 5px;
+// }
+//
+// .channel-user-chat-send-button {
+//   height: 30px;
+//   box-sizing: border-box;
+//   background-color: #008cff;
+//   border-radius: 5px;
+//   padding: 7px 20px 5px 20px;
+//   margin: 0px 5px;
+//   text-transform: uppercase;
+//   text-align: center;
+//   color: white;
+//   letter-spacing: 1px;
+//   cursor: pointer;
+// }
+//
+// .chat-message-container {
+//   margin: 7px 5px;
+// }
+//
+// .chat-message-header {
+//   display: flex;
+// }
+//
+// .chat-message-author {
+//   font-weight: bold;
+//   font-style: italic;
+// }
+//
+// .chat-messsage-timestamp::before {
+//   content: " - ";
+// }
+//
+// .chat-message-timestamp {
+//   font-size: 0.8em;
+//   font-style: italic;
+//   color: #9d9d9d;
+//   align-self: flex-end;
+//   padding-left: 3px;
+// }
+//
+// .add-channel-container, .add-member-container {
+//   display: flex;
+// }
+//
+// .add-channel-input, .add-member-input {
+//   font-size: 0.7em;
+//   width: 80px;
+//   padding: 5px 4px;
+//   margin-left: 5px;
+//   margin-right: 3px;
+// }
+//
+// .add-channel-button, .add-member-button {
+//   height: 18px;
+//   width: 18px;
+//   border-radius: 25px;
+//   background-color: white;
+//   border: 1px solid #0d122b;
+//   text-align: center;
+//   line-height: 1;
+//   cursor: pointer;
+// }
+//
+// .add-member-container {
+//   background: #0d122b;
+//   padding: 3px;
+// }

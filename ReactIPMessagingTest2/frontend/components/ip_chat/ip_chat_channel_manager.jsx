@@ -1,14 +1,9 @@
 import React from 'react';
-import ChannelUser from './ip_chat';
+import ChatChannel from './ip_chat';
 import AddChannel from './add_channel';
+import Styles from './ip_messaging_styles';
 
-function announceMessage() {
-  console.log("MESSAGE CALLBACK!");
-}
-
-function announceTyping() {
-  console.log("WHOA SOMEONES TYPING!");
-}
+require('./ip_messaging_stylesheet.css');
 
 class IPChatChannelManager extends React.Component {
   constructor(props) {
@@ -123,7 +118,6 @@ class IPChatChannelManager extends React.Component {
   }
 
   _listenForInvites() {
-    debugger;
     this.messagingClient.on("channelInvited", (channel) => {
       this._acceptInvite(channel);
     });
@@ -139,20 +133,31 @@ class IPChatChannelManager extends React.Component {
     let messages = this.state.messages;
     let activeChannel = this.state.activeChannel;
     let unreadMessageCounts = this.state.unreadMessageCounts;
+    let styles = Styles;
 
+    let activeStyle;
     let channelNames;
     if (channels) {
       let channelKeys = Object.keys(channels);
       channelNames = channelKeys.map(channelKey => {
+        let isActive = false;
         let channel = channels[channelKey];
-        let activeStatus = (activeChannel === channel) ?
-          " active-channel-name" : "";
+        let className = "channel-manager-channel-name";
+        let style = Object.assign({}, styles.channelManagerChannelName);
+        if (activeChannel === channel) {
+          isActive = true;
+          className = className + " active-channel-name";
+          activeStyle = Object.assign(style, styles.activeChannelName);
+        }
+
         let messageCount = (unreadMessageCounts &&
           unreadMessageCounts[channelKey]) ?
           unreadMessageCounts[channelKey] : "";
+
         return (
           <div
-            className={`channel-manager-channel-name` + activeStatus}
+            className={className}
+            style={(isActive) ? activeStyle : style}
             key={channel.sid}
             onClick={() => channelManager._changeChannel(channel.uniqueName)}>
             <div className={`channel-name-unread-messages-container
@@ -170,24 +175,25 @@ class IPChatChannelManager extends React.Component {
     let activeChat;
     if (activeChannel && messages) {
       activeChat = (
-        <ChannelUser
+        <ChatChannel
           key={activeChannel.sid}
           channel={activeChannel}
           messages={messages[activeChannel.uniqueName]}
-          onMessageAdded={announceMessage}
-          onTypingStarted={announceTyping}
         />
       );
     } else {
       activeChat = (
-        <div>Loading...</div>
+        <div>Loading messages...</div>
       );
     }
 
     return (
-      <div className="active-chat-container">
-        <div className="active-channel-manager">
-          <div className="channel-names-container">
+      <div className="active-chat-container"
+        style={Styles.activeChatContainer}>
+        <div className="active-channel-manager"
+          style={Styles.activeChannelManager}>
+          <div className="channel-names-container"
+            style={Styles.channelNamesContainer}>
             {channelNames}
           </div>
           <AddChannel

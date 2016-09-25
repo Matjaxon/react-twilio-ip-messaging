@@ -2,7 +2,9 @@ import React from 'react';
 import IPMessage from './ip_message';
 import InviteMember from './invite_member';
 
-class ChannelUser extends React.Component {
+require('./ip_messaging_stylesheet.css');
+
+class ChatChannel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -108,7 +110,6 @@ class ChannelUser extends React.Component {
   }
 
   _inviteMember(identity) {
-    debugger;
     this.channel.invite(identity);
   }
 
@@ -151,4 +152,4 @@ class ChannelUser extends React.Component {
     );
   }
 }
- export default ChannelUser;
+ export default ChatChannel;

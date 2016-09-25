@@ -21452,7 +21452,7 @@
 	
 	var _ip_chat2 = _interopRequireDefault(_ip_chat);
 	
-	var _ip_chat_client = __webpack_require__(175);
+	var _ip_chat_client = __webpack_require__(180);
 	
 	var _ip_chat_client2 = _interopRequireDefault(_ip_chat_client);
 	
@@ -21578,7 +21578,7 @@
 	
 	var _ip_message2 = _interopRequireDefault(_ip_message);
 	
-	var _invite_member = __webpack_require__(178);
+	var _invite_member = __webpack_require__(175);
 	
 	var _invite_member2 = _interopRequireDefault(_invite_member);
 	
@@ -21592,13 +21592,15 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var ChannelUser = function (_React$Component) {
-	  _inherits(ChannelUser, _React$Component);
+	__webpack_require__(176);
 	
-	  function ChannelUser(props) {
-	    _classCallCheck(this, ChannelUser);
+	var ChatChannel = function (_React$Component) {
+	  _inherits(ChatChannel, _React$Component);
 	
-	    var _this = _possibleConstructorReturn(this, (ChannelUser.__proto__ || Object.getPrototypeOf(ChannelUser)).call(this, props));
+	  function ChatChannel(props) {
+	    _classCallCheck(this, ChatChannel);
+	
+	    var _this = _possibleConstructorReturn(this, (ChatChannel.__proto__ || Object.getPrototypeOf(ChatChannel)).call(this, props));
 	
 	    _this.state = {
 	      messages: _this.props.messages
@@ -21635,7 +21637,7 @@
 	    return _this;
 	  }
 	
-	  _createClass(ChannelUser, [{
+	  _createClass(ChatChannel, [{
 	    key: 'componentWillMount',
 	    value: function componentWillMount() {
 	      var channel = this.channel;
@@ -21715,7 +21717,6 @@
 	  }, {
 	    key: '_inviteMember',
 	    value: function _inviteMember(identity) {
-	      debugger;
 	      this.channel.invite(identity);
 	    }
 	  }, {
@@ -21775,10 +21776,10 @@
 	    }
 	  }]);
 	
-	  return ChannelUser;
+	  return ChatChannel;
 	}(_react2.default.Component);
 	
-	exports.default = ChannelUser;
+	exports.default = ChatChannel;
 
 /***/ },
 /* 174 */
@@ -21837,6 +21838,447 @@
 /* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var InviteMember = function (_React$Component) {
+	  _inherits(InviteMember, _React$Component);
+	
+	  function InviteMember(props) {
+	    _classCallCheck(this, InviteMember);
+	
+	    var _this = _possibleConstructorReturn(this, (InviteMember.__proto__ || Object.getPrototypeOf(InviteMember)).call(this, props));
+	
+	    _this.inviteMember = props.inviteMember;
+	
+	    _this.state = {
+	      memberIdentity: ""
+	    };
+	
+	    _this._handleChange = _this._handleChange.bind(_this);
+	    _this._inviteMember = _this._inviteMember.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(InviteMember, [{
+	    key: "_handleChange",
+	    value: function _handleChange(key) {
+	      var _this2 = this;
+	
+	      return function (event) {
+	        _this2.setState(_defineProperty({}, key, event.target.value));
+	      };
+	    }
+	  }, {
+	    key: "_inviteMember",
+	    value: function _inviteMember(event) {
+	      event.preventDefault();
+	      var memberIdentity = this.state.memberIdentity;
+	      this.inviteMember(memberIdentity);
+	      this.setState({ memberIdentity: "" });
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      return _react2.default.createElement(
+	        "div",
+	        { className: "add-member-container" },
+	        _react2.default.createElement(
+	          "form",
+	          { onSubmit: this._inviteMember },
+	          _react2.default.createElement("input", { className: "add-member-input",
+	            placeholder: "Invite Member",
+	            onChange: this._handleChange("memberIdentity") }),
+	          _react2.default.createElement(
+	            "button",
+	            { className: "add-member-button" },
+	            _react2.default.createElement(
+	              "div",
+	              { className: "add-button-text" },
+	              "+"
+	            )
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return InviteMember;
+	}(_react2.default.Component);
+	
+	exports.default = InviteMember;
+
+/***/ },
+/* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(177);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(179)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./ip_messaging_stylesheet.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./ip_messaging_stylesheet.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 177 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(178)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".active-chat-container {\n  display: flex;\n  border: 1px solid #0d122b;\n  width: 450px;\n  font-family: helvetica, sans-serif;\n  box-sizing: border-box;\n}\n\n.active-channel-manager {\n  display:flex;\n  flex-direction: column;\n  width: 125px;\n  background-color: #f6f6f6;\n}\n\n.channel-names-container {\n  min-height: 90%;\n  overflow-y: scroll;\n  overflow-x: hidden;\n}\n\n.channel-manager-channel-name {\n  display: flex;\n  padding: 5px;\n  width: 125px;\n  border-bottom: 1px solid #e6e6e6;\n  border-left: 0px solid transparent;\n  font-size: 0.7em;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  overflow: hidden;\n  box-sizing: border-box;\n  white-space:nowrap;\n  text-transform: lowercase;\n}\n\n.channel-manager-channel-name:hover {\n  border-left: 5px solid #c41025;\n  color: #c41025;\n}\n.channel-manager-channel-name:hover\n.channel-name-unread-messages {\n  background-color: #c41025;\n}\n\n.channel-names-container {\n  height: 200px;\n  box-sizing: border-box;\n}\n\n.channel-name-unread-messages-container {\n  width: 15px;\n  height: 15px;\n  margin-right: 3px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n\n.channel-name-unread-messages {\n  font-size: 0.45em;\n  background: #0d122b;\n  border-radius: 25px;\n  color: #f6f6f6;\n}\n\n.channel-name-text {\n  overflow: hidden;\n}\n\n.active-channel-name {\n  font-weight: bold;\n}\n\n.channel-user-chat-container {\n  font-family: helvetica, sans-serif;\n  border-left: 1px solid #e6e6e6;\n  position: relative;\n  display: flex;\n  display: block;\n  width: 325px;\n  box-sizing: border-box;\n  font-size: 12px;\n}\n\n.channel-user-channel-name-container {\n  display: flex;\n  justify-content: space-between;\n  border-bottom: 1px solid black;\n}\n\n.channel-user-channel-name {\n  flex-grow: 1;\n  text-transform: uppercase;\n  letter-spacing: 1px;\n  font-weight: 200;\n  color: white;\n  background-color: #0d122b;\n  padding: 7px 10px;\n}\n\n.channel-user-chat-window {\n  border: 1px solid #f5f5f5;\n  flex-grow: 1;\n  height: 250px;\n  min-height:250px;\n  box-sizing: border-box;\n  overflow-y: scroll;\n  font-size: 12px;\n}\n\n.channel-user-input-container {\n  display: flex;\n  flex-direction: row;\n  width: 100%;\n  border-top: 1px solid #e6e6e6;\n  padding: 5px 10px;\n  box-sizing: border-box;\n  align-items: center;\n  background-color: #f6f6f6;\n}\n\n.channel-user-chat-input {\n  border: 1px solid #bababa;\n  margin: 0px 5px;\n  height: 30px;\n  width: 80%;\n  box-sizing: border-box;\n  resize: none;\n  border-radius: 5px;\n}\n\n.channel-user-chat-send-button {\n  height: 30px;\n  box-sizing: border-box;\n  background-color: #008cff;\n  border-radius: 5px;\n  padding: 7px 20px 5px 20px;\n  margin: 0px 5px;\n  text-transform: uppercase;\n  text-align: center;\n  color: white;\n  letter-spacing: 1px;\n  cursor: pointer;\n}\n\n.chat-message-container {\n  margin: 7px 5px;\n}\n\n.chat-message-header {\n  display: flex;\n}\n\n.chat-message-author {\n  font-weight: bold;\n  font-style: italic;\n}\n\n.chat-messsage-timestamp::before {\n  content: \" - \";\n}\n\n.chat-message-timestamp {\n  font-size: 0.8em;\n  font-style: italic;\n  color: #9d9d9d;\n  align-self: flex-end;\n  padding-left: 3px;\n}\n\n.add-channel-container, .add-member-container {\n  display: flex;\n}\n\n.add-channel-input, .add-member-input {\n  font-size: 0.7em;\n  width: 80px;\n  padding: 5px 4px;\n  margin-left: 5px;\n  margin-right: 3px;\n}\n\n.add-channel-button, .add-member-button {\n  height: 18px;\n  width: 18px;\n  border-radius: 25px;\n  background-color: white;\n  border: 1px solid #0d122b;\n  text-align: center;\n  line-height: 1;\n  cursor: pointer;\n}\n\n.add-member-container {\n  background: #0d122b;\n  padding: 3px;\n}\n", ""]);
+	
+	// exports
+
+
+/***/ },
+/* 178 */
+/***/ function(module, exports) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function() {
+		var list = [];
+	
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+	
+		// import a list of modules into the list
+		list.i = function(modules, mediaQuery) {
+			if(typeof modules === "string")
+				modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for(var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if(typeof id === "number")
+					alreadyImportedModules[id] = true;
+			}
+			for(i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if(mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if(mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+
+/***/ },
+/* 179 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {},
+		memoize = function(fn) {
+			var memo;
+			return function () {
+				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+				return memo;
+			};
+		},
+		isOldIE = memoize(function() {
+			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+		}),
+		getHeadElement = memoize(function () {
+			return document.head || document.getElementsByTagName("head")[0];
+		}),
+		singletonElement = null,
+		singletonCounter = 0,
+		styleElementsInsertedAtTop = [];
+	
+	module.exports = function(list, options) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+		}
+	
+		options = options || {};
+		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+		// tags it will allow on a page
+		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+	
+		// By default, add <style> tags to the bottom of <head>.
+		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+	
+		var styles = listToStyles(list);
+		addStylesToDom(styles, options);
+	
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles, options);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
+	}
+	
+	function addStylesToDom(styles, options) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j], options));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j], options));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
+	}
+	
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			var sourceMap = item[3];
+			var part = {css: css, media: media, sourceMap: sourceMap};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
+	}
+	
+	function insertStyleElement(options, styleElement) {
+		var head = getHeadElement();
+		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+		if (options.insertAt === "top") {
+			if(!lastStyleElementInsertedAtTop) {
+				head.insertBefore(styleElement, head.firstChild);
+			} else if(lastStyleElementInsertedAtTop.nextSibling) {
+				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+			} else {
+				head.appendChild(styleElement);
+			}
+			styleElementsInsertedAtTop.push(styleElement);
+		} else if (options.insertAt === "bottom") {
+			head.appendChild(styleElement);
+		} else {
+			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+		}
+	}
+	
+	function removeStyleElement(styleElement) {
+		styleElement.parentNode.removeChild(styleElement);
+		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+		if(idx >= 0) {
+			styleElementsInsertedAtTop.splice(idx, 1);
+		}
+	}
+	
+	function createStyleElement(options) {
+		var styleElement = document.createElement("style");
+		styleElement.type = "text/css";
+		insertStyleElement(options, styleElement);
+		return styleElement;
+	}
+	
+	function createLinkElement(options) {
+		var linkElement = document.createElement("link");
+		linkElement.rel = "stylesheet";
+		insertStyleElement(options, linkElement);
+		return linkElement;
+	}
+	
+	function addStyle(obj, options) {
+		var styleElement, update, remove;
+	
+		if (options.singleton) {
+			var styleIndex = singletonCounter++;
+			styleElement = singletonElement || (singletonElement = createStyleElement(options));
+			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+		} else if(obj.sourceMap &&
+			typeof URL === "function" &&
+			typeof URL.createObjectURL === "function" &&
+			typeof URL.revokeObjectURL === "function" &&
+			typeof Blob === "function" &&
+			typeof btoa === "function") {
+			styleElement = createLinkElement(options);
+			update = updateLink.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+				if(styleElement.href)
+					URL.revokeObjectURL(styleElement.href);
+			};
+		} else {
+			styleElement = createStyleElement(options);
+			update = applyToTag.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+			};
+		}
+	
+		update(obj);
+	
+		return function updateStyle(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+					return;
+				update(obj = newObj);
+			} else {
+				remove();
+			}
+		};
+	}
+	
+	var replaceText = (function () {
+		var textStore = [];
+	
+		return function (index, replacement) {
+			textStore[index] = replacement;
+			return textStore.filter(Boolean).join('\n');
+		};
+	})();
+	
+	function applyToSingletonTag(styleElement, index, remove, obj) {
+		var css = remove ? "" : obj.css;
+	
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = replaceText(index, css);
+		} else {
+			var cssNode = document.createTextNode(css);
+			var childNodes = styleElement.childNodes;
+			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+			if (childNodes.length) {
+				styleElement.insertBefore(cssNode, childNodes[index]);
+			} else {
+				styleElement.appendChild(cssNode);
+			}
+		}
+	}
+	
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+	
+		if(media) {
+			styleElement.setAttribute("media", media)
+		}
+	
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
+			}
+			styleElement.appendChild(document.createTextNode(css));
+		}
+	}
+	
+	function updateLink(linkElement, obj) {
+		var css = obj.css;
+		var sourceMap = obj.sourceMap;
+	
+		if(sourceMap) {
+			// http://stackoverflow.com/a/26603875
+			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+		}
+	
+		var blob = new Blob([css], { type: "text/css" });
+	
+		var oldSrc = linkElement.href;
+	
+		linkElement.href = URL.createObjectURL(blob);
+	
+		if(oldSrc)
+			URL.revokeObjectURL(oldSrc);
+	}
+
+
+/***/ },
+/* 180 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
@@ -21853,11 +22295,7 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _ip_chat = __webpack_require__(173);
-	
-	var _ip_chat2 = _interopRequireDefault(_ip_chat);
-	
-	var _ip_chat_channel_manager = __webpack_require__(176);
+	var _ip_chat_channel_manager = __webpack_require__(181);
 	
 	var _ip_chat_channel_manager2 = _interopRequireDefault(_ip_chat_channel_manager);
 	
@@ -21868,6 +22306,8 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	__webpack_require__(176);
 	
 	function refreshToken(accessManager, url, device) {
 	  $.ajax({
@@ -21891,7 +22331,7 @@
 	    var _this = _possibleConstructorReturn(this, (IPChatClient.__proto__ || Object.getPrototypeOf(IPChatClient)).call(this, props));
 	
 	    if (!props.tokenUrl) {
-	      throw "No url given retrieve token. Chat client will not be able to initialize.";
+	      throw "No url given to retrieve token. Chat client will not be able to initialize.";
 	    }
 	    _this.token = props.token;
 	    _this.tokenUrl = props.tokenUrl;
@@ -21937,7 +22377,7 @@
 	        return _react2.default.createElement(
 	          'div',
 	          { className: 'client-loading' },
-	          'Loading...'
+	          'Starting chat...'
 	        );
 	      }
 	    }
@@ -21949,7 +22389,7 @@
 	exports.default = IPChatClient;
 
 /***/ },
-/* 176 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21968,9 +22408,13 @@
 	
 	var _ip_chat2 = _interopRequireDefault(_ip_chat);
 	
-	var _add_channel = __webpack_require__(177);
+	var _add_channel = __webpack_require__(182);
 	
 	var _add_channel2 = _interopRequireDefault(_add_channel);
+	
+	var _ip_messaging_styles = __webpack_require__(183);
+	
+	var _ip_messaging_styles2 = _interopRequireDefault(_ip_messaging_styles);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -21980,13 +22424,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	function announceMessage() {
-	  console.log("MESSAGE CALLBACK!");
-	}
-	
-	function announceTyping() {
-	  console.log("WHOA SOMEONES TYPING!");
-	}
+	__webpack_require__(176);
 	
 	var IPChatChannelManager = function (_React$Component) {
 	  _inherits(IPChatChannelManager, _React$Component);
@@ -22121,7 +22559,6 @@
 	    value: function _listenForInvites() {
 	      var _this5 = this;
 	
-	      debugger;
 	      this.messagingClient.on("channelInvited", function (channel) {
 	        _this5._acceptInvite(channel);
 	      });
@@ -22139,18 +22576,30 @@
 	      var messages = this.state.messages;
 	      var activeChannel = this.state.activeChannel;
 	      var unreadMessageCounts = this.state.unreadMessageCounts;
+	      var styles = _ip_messaging_styles2.default;
 	
+	      var activeStyle = void 0;
 	      var channelNames = void 0;
 	      if (channels) {
 	        var channelKeys = Object.keys(channels);
 	        channelNames = channelKeys.map(function (channelKey) {
+	          var isActive = false;
 	          var channel = channels[channelKey];
-	          var activeStatus = activeChannel === channel ? " active-channel-name" : "";
+	          var className = "channel-manager-channel-name";
+	          var style = Object.assign({}, styles.channelManagerChannelName);
+	          if (activeChannel === channel) {
+	            isActive = true;
+	            className = className + " active-channel-name";
+	            activeStyle = Object.assign(style, styles.activeChannelName);
+	          }
+	
 	          var messageCount = unreadMessageCounts && unreadMessageCounts[channelKey] ? unreadMessageCounts[channelKey] : "";
+	
 	          return _react2.default.createElement(
 	            'div',
 	            {
-	              className: 'channel-manager-channel-name' + activeStatus,
+	              className: className,
+	              style: isActive ? activeStyle : style,
 	              key: channel.sid,
 	              onClick: function onClick() {
 	                return channelManager._changeChannel(channel.uniqueName);
@@ -22180,27 +22629,28 @@
 	        activeChat = _react2.default.createElement(_ip_chat2.default, {
 	          key: activeChannel.sid,
 	          channel: activeChannel,
-	          messages: messages[activeChannel.uniqueName],
-	          onMessageAdded: announceMessage,
-	          onTypingStarted: announceTyping
+	          messages: messages[activeChannel.uniqueName]
 	        });
 	      } else {
 	        activeChat = _react2.default.createElement(
 	          'div',
 	          null,
-	          'Loading...'
+	          'Loading messages...'
 	        );
 	      }
 	
 	      return _react2.default.createElement(
 	        'div',
-	        { className: 'active-chat-container' },
+	        { className: 'active-chat-container',
+	          style: _ip_messaging_styles2.default.activeChatContainer },
 	        _react2.default.createElement(
 	          'div',
-	          { className: 'active-channel-manager' },
+	          { className: 'active-channel-manager',
+	            style: _ip_messaging_styles2.default.activeChannelManager },
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'channel-names-container' },
+	            { className: 'channel-names-container',
+	              style: _ip_messaging_styles2.default.channelNamesContainer },
 	            channelNames
 	          ),
 	          _react2.default.createElement(_add_channel2.default, {
@@ -22218,10 +22668,10 @@
 	exports.default = IPChatChannelManager;
 
 /***/ },
-/* 177 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -22243,6 +22693,8 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
+	__webpack_require__(176);
+	
 	var AddChannel = function (_React$Component) {
 	  _inherits(AddChannel, _React$Component);
 	
@@ -22263,7 +22715,7 @@
 	  }
 	
 	  _createClass(AddChannel, [{
-	    key: "_handleChange",
+	    key: '_handleChange',
 	    value: function _handleChange(key) {
 	      var _this2 = this;
 	
@@ -22272,7 +22724,7 @@
 	      };
 	    }
 	  }, {
-	    key: "_handleSubmit",
+	    key: '_handleSubmit',
 	    value: function _handleSubmit(event) {
 	      var _this3 = this;
 	
@@ -22300,28 +22752,28 @@
 	      }
 	    }
 	  }, {
-	    key: "render",
+	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
-	        "div",
-	        { className: "add-channel-container" },
+	        'div',
+	        { className: 'add-channel-container' },
 	        _react2.default.createElement(
-	          "form",
+	          'form',
 	          { onSubmit: this._handleSubmit },
-	          _react2.default.createElement("input", { type: "text",
-	            className: "add-channel-input",
-	            placeholder: "New Channel",
+	          _react2.default.createElement('input', { type: 'text',
+	            className: 'add-channel-input',
+	            placeholder: 'New Channel',
 	            onChange: this._handleChange("channelName")
 	          }),
 	          _react2.default.createElement(
-	            "button",
+	            'button',
 	            {
-	              className: "add-channel-button",
+	              className: 'add-channel-button',
 	              onClick: this._handleSubmit },
 	            _react2.default.createElement(
-	              "div",
-	              { className: "add-button-text" },
-	              "+"
+	              'div',
+	              { className: 'add-button-text' },
+	              '+'
 	            )
 	          )
 	        )
@@ -22335,97 +22787,54 @@
 	exports.default = AddChannel;
 
 /***/ },
-/* 178 */
-/***/ function(module, exports, __webpack_require__) {
+/* 183 */
+/***/ function(module, exports) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var InviteMember = function (_React$Component) {
-	  _inherits(InviteMember, _React$Component);
-	
-	  function InviteMember(props) {
-	    _classCallCheck(this, InviteMember);
-	
-	    var _this = _possibleConstructorReturn(this, (InviteMember.__proto__ || Object.getPrototypeOf(InviteMember)).call(this, props));
-	
-	    _this.inviteMember = props.inviteMember;
-	
-	    _this.state = {
-	      memberIdentity: ""
-	    };
-	
-	    _this._handleChange = _this._handleChange.bind(_this);
-	    _this._inviteMember = _this._inviteMember.bind(_this);
-	    return _this;
+	var Styles = {
+	  activeChatContainer: {
+	    display: 'flex',
+	    border: '1px solid #0d122b',
+	    width: '450px',
+	    fontFamily: 'helvetica, sans-serif',
+	    boxSizing: 'border-box'
+	  },
+	  activeChannelManager: {
+	    display: 'flex',
+	    flexDirection: 'column',
+	    width: '125px',
+	    backgroundColor: '#f6f6f6'
+	  },
+	  channelNamesContainer: {
+	    minHeight: '90%',
+	    overflowY: 'scroll',
+	    overflowX: 'hidden'
+	  },
+	  channelManagerChannelName: {
+	    display: 'flex',
+	    padding: '5px',
+	    width: '125px',
+	    borderBottom: '1px solid #e6e6e6',
+	    borderLeft: '0px solid transparent',
+	    fontSize: '0.7em',
+	    cursor: 'pointer',
+	    transition: 'all 0.2s ease',
+	    overflow: 'hidden',
+	    boxSizing: 'border-box',
+	    whiteSpace: 'nowrap',
+	    textTransform: 'lowercase',
+	    fontWeight: 'normal'
+	  },
+	  activeChannelName: {
+	    fontWeight: 'bold'
 	  }
+	};
 	
-	  _createClass(InviteMember, [{
-	    key: "_handleChange",
-	    value: function _handleChange(key) {
-	      var _this2 = this;
-	
-	      return function (event) {
-	        _this2.setState(_defineProperty({}, key, event.target.value));
-	      };
-	    }
-	  }, {
-	    key: "_inviteMember",
-	    value: function _inviteMember(event) {
-	      event.preventDefault();
-	      var memberIdentity = this.state.memberIdentity;
-	      this.inviteMember(memberIdentity);
-	      this.setState({ memberIdentity: "" });
-	    }
-	  }, {
-	    key: "render",
-	    value: function render() {
-	      return _react2.default.createElement(
-	        "div",
-	        { className: "add-member-container" },
-	        _react2.default.createElement(
-	          "form",
-	          { onSubmit: this._inviteMember },
-	          _react2.default.createElement("input", { className: "add-member-input",
-	            placeholder: "Invite Member",
-	            onChange: this._handleChange("memberIdentity") }),
-	          _react2.default.createElement(
-	            "button",
-	            { className: "add-member-button" },
-	            _react2.default.createElement(
-	              "div",
-	              { className: "add-button-text" },
-	              "+"
-	            )
-	          )
-	        )
-	      );
-	    }
-	  }]);
-	
-	  return InviteMember;
-	}(_react2.default.Component);
-	
-	exports.default = InviteMember;
+	exports.default = Styles;
 
 /***/ }
 /******/ ]);

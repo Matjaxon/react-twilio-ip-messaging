@@ -1,5 +1,7 @@
 import React from 'react';
 
+require('./ip_messaging_stylesheet.css');
+
 class AddChannel extends React.Component {
   constructor(props) {
     super(props);

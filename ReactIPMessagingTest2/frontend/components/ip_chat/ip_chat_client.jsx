@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ChannelUser from './ip_chat';
 import IPChatChannelManager from './ip_chat_channel_manager';
+
+require('./ip_messaging_stylesheet.css');
 
 function refreshToken(accessManager, url, device) {
   $.ajax({
@@ -19,7 +20,7 @@ class IPChatClient extends React.Component {
   constructor(props) {
     super(props);
     if (!props.tokenUrl) {
-      throw "No url given retrieve token. Chat client will not be able to initialize.";
+      throw "No url given to retrieve token. Chat client will not be able to initialize.";
     }
     this.token = props.token;
     this.tokenUrl = props.tokenUrl;
@@ -60,7 +61,7 @@ class IPChatClient extends React.Component {
       );
     } else {
       return (
-        <div className="client-loading">Loading...</div>
+        <div className="client-loading">Starting chat...</div>
       );
     }
   }

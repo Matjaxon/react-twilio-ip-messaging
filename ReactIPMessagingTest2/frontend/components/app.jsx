@@ -13,7 +13,6 @@ class App extends React.Component {
 
   _loginAsMatt(event) {
     event.preventDefault();
-    console.log("clicked");
     let app = this;
     $.ajax({
       method: "POST",
@@ -30,7 +29,6 @@ class App extends React.Component {
 
   _loginAsBilly(event) {
     event.preventDefault();
-    console.log("clicked");
     let app = this;
     $.ajax({
       method: "POST",

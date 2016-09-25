@@ -10,9 +10,32 @@ class ChannelUser extends React.Component {
     this.channel = props.channel;
     this.channelName = props.channel.friendlyName;
 
+    this.channelEventCallbacks = {
+      memberJoined: props.onMemberJoined,
+      memberLeft: props.onMemberLeft,
+      memberUpdated: props.onMemberUpdated,
+      memberInfoUpdated: props.onMemberInfoUpdated,
+      messageAdded: props.onMessageAdded,
+      messageRemoved: props.onMessageRemoved,
+      messageUpdated: props.onMessageUpdated,
+      typingEnded: props.onTypingEnded,
+      typingStarted: props.onTypingStarted,
+      updated: props.onUpdated
+    };
+
+    //Bind methods to instance
     this._sendMessage = this._sendMessage.bind(this);
     this._handleChange = this._handleChange.bind(this);
     this._scrollToBottom = this._scrollToBottom.bind(this);
+    this._fetchMessages = this._fetchMessages.bind(this);
+    this._setupEventListenersFromProps = this._setupEventListenersFromProps.bind(this);
+
+    /*
+      Add custom callbacks passed in as props as event listeners
+      for events delivered by the Twilio API.
+    */
+    this._setupEventListenersFromProps(this.channel,
+      this, this.channelEventCallbacks);
   }
 
   componentWillMount() {
@@ -27,19 +50,42 @@ class ChannelUser extends React.Component {
       });
     });
 
-    channel.on('messageAdded', () => {
-      channel.getMessages().then(newMessages => {
-        chatChannel.setState({messages: newMessages});
-      });
-    });
+    channel.on('messageAdded', this._fetchMessages);
+  }
+
+  componentWillUnmount() {
+    this.channel.removeListener("messageAdded", this._fetchMessages);
   }
 
   componentDidUpdate() {
     this._scrollToBottom();
   }
 
+  _fetchMessages() {
+    let channel = this.channel;
+    let chatChannel = this;
+    channel.getMessages().then(newMessages => {
+      chatChannel.setState({messages: newMessages});
+    });
+  }
+
+  _setupEventListenersFromProps(channel, chatChannel, channelEventCallbacks) {
+    let channelEvents = Object.keys(channelEventCallbacks);
+    channelEvents.forEach( channelEvent => {
+      if (channelEventCallbacks[channelEvent]) {
+        let callback = channelEventCallbacks[channelEvent];
+        channel.on(channelEvent, (defaultReturn) => {
+          callback(defaultReturn, chatChannel.state);
+        });
+      }
+    });
+  }
+
   _handleChange(key) {
-    return (event) => this.setState({[key]: event.target.value});
+    return (event) => {
+      this.channel.typing();
+      this.setState({[key]: event.target.value});
+    };
   }
 
   _sendMessage(event) {
@@ -51,7 +97,9 @@ class ChannelUser extends React.Component {
   }
 
   _scrollToBottom() {
-    let chatWindows = Array.from(document.getElementsByClassName("channel-user-chat-window"));
+    let chatWindows = Array.from(
+        document.getElementsByClassName("channel-user-chat-window")
+      );
     chatWindows.forEach(chatWindow => {
       chatWindow.scrollTop = chatWindow.scrollHeight;
     });

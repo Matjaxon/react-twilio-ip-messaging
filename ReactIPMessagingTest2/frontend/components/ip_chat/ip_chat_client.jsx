@@ -14,10 +14,13 @@ function refreshToken(accessManager, url, device) {
   });
 }
 
-//expected props are token, url, and device to refresh token.
+//Expected props are tokenUrl and device to refresh token.
 class IPChatClient extends React.Component {
   constructor(props) {
     super(props);
+    if (!props.tokenUrl) {
+      throw "No url given retrieve token. Chat client will not be able to initialize.";
+    }
     this.token = props.token;
     this.tokenUrl = props.tokenUrl;
     this.device = props.device || "browser"; // default to "browser"

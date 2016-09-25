@@ -28,11 +28,12 @@
 }
 
 .channel-manager-channel-name {
-  padding: 5px 10px 5px 15px;
+  display: flex;
+  padding: 5px;
   width: 100px;
   border-bottom: 1px solid #e6e6e6;
   border-left: 0px solid transparent;
-  font-size: 0.8em;
+  font-size: 0.7em;
   cursor: pointer;
   transition: all 0.2s ease;
   overflow: hidden;
@@ -44,6 +45,30 @@
 .channel-manager-channel-name:hover {
   border-left: 5px solid #c41025;
   color: #c41025;
+}
+.channel-manager-channel-name:hover
+.channel-name-unread-messages {
+  background-color: #c41025;
+}
+
+.channel-name-unread-messages-container {
+  width: 15px;
+  height: 15px;
+  margin-right: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.channel-name-unread-messages {
+  font-size: 0.45em;
+  background: #0d122b;
+  border-radius: 25px;
+  color: #f6f6f6;
+}
+
+.channel-name-text {
+  overflow: hidden;
 }
 
 .active-channel-name {
@@ -89,7 +114,7 @@
   flex-direction: row;
   width: 100%;
   border-top: 1px solid #e6e6e6;
-  padding: 10px;
+  padding: 5px 10px;
   box-sizing: border-box;
   align-items: center;
   background-color: #f6f6f6;

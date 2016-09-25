@@ -21483,7 +21483,6 @@
 	    key: '_loginAsMatt',
 	    value: function _loginAsMatt(event) {
 	      event.preventDefault();
-	      console.log("clicked");
 	      var app = this;
 	      $.ajax({
 	        method: "POST",
@@ -21503,7 +21502,6 @@
 	    key: '_loginAsBilly',
 	    value: function _loginAsBilly(event) {
 	      event.preventDefault();
-	      console.log("clicked");
 	      var app = this;
 	      $.ajax({
 	        method: "POST",
@@ -21604,9 +21602,31 @@
 	    _this.channel = props.channel;
 	    _this.channelName = props.channel.friendlyName;
 	
+	    _this.channelEventCallbacks = {
+	      memberJoined: props.onMemberJoined,
+	      memberLeft: props.onMemberLeft,
+	      memberUpdated: props.onMemberUpdated,
+	      memberInfoUpdated: props.onMemberInfoUpdated,
+	      messageAdded: props.onMessageAdded,
+	      messageRemoved: props.onMessageRemoved,
+	      messageUpdated: props.onMessageUpdated,
+	      typingEnded: props.onTypingEnded,
+	      typingStarted: props.onTypingStarted,
+	      updated: props.onUpdated
+	    };
+	
+	    //Bind methods to instance
 	    _this._sendMessage = _this._sendMessage.bind(_this);
 	    _this._handleChange = _this._handleChange.bind(_this);
 	    _this._scrollToBottom = _this._scrollToBottom.bind(_this);
+	    _this._fetchMessages = _this._fetchMessages.bind(_this);
+	    _this._setupEventListenersFromProps = _this._setupEventListenersFromProps.bind(_this);
+	
+	    /*
+	      Add custom callbacks passed in as props as event listeners
+	      for events delivered by the Twilio API.
+	    */
+	    _this._setupEventListenersFromProps(_this.channel, _this, _this.channelEventCallbacks);
 	    return _this;
 	  }
 	
@@ -21624,11 +21644,12 @@
 	        });
 	      });
 	
-	      channel.on('messageAdded', function () {
-	        channel.getMessages().then(function (newMessages) {
-	          chatChannel.setState({ messages: newMessages });
-	        });
-	      });
+	      channel.on('messageAdded', this._fetchMessages);
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      this.channel.removeListener("messageAdded", this._fetchMessages);
 	    }
 	  }, {
 	    key: 'componentDidUpdate',
@@ -21636,12 +21657,37 @@
 	      this._scrollToBottom();
 	    }
 	  }, {
+	    key: '_fetchMessages',
+	    value: function _fetchMessages() {
+	      var channel = this.channel;
+	      var chatChannel = this;
+	      channel.getMessages().then(function (newMessages) {
+	        chatChannel.setState({ messages: newMessages });
+	      });
+	    }
+	  }, {
+	    key: '_setupEventListenersFromProps',
+	    value: function _setupEventListenersFromProps(channel, chatChannel, channelEventCallbacks) {
+	      var channelEvents = Object.keys(channelEventCallbacks);
+	      channelEvents.forEach(function (channelEvent) {
+	        if (channelEventCallbacks[channelEvent]) {
+	          (function () {
+	            var callback = channelEventCallbacks[channelEvent];
+	            channel.on(channelEvent, function (defaultReturn) {
+	              callback(defaultReturn, chatChannel.state);
+	            });
+	          })();
+	        }
+	      });
+	    }
+	  }, {
 	    key: '_handleChange',
 	    value: function _handleChange(key) {
 	      var _this2 = this;
 	
 	      return function (event) {
-	        return _this2.setState(_defineProperty({}, key, event.target.value));
+	        _this2.channel.typing();
+	        _this2.setState(_defineProperty({}, key, event.target.value));
 	      };
 	    }
 	  }, {
@@ -21822,7 +21868,7 @@
 	  });
 	}
 	
-	//expected props are token, url, and device to refresh token.
+	//Expected props are tokenUrl and device to refresh token.
 	
 	var IPChatClient = function (_React$Component) {
 	  _inherits(IPChatClient, _React$Component);
@@ -21832,6 +21878,9 @@
 	
 	    var _this = _possibleConstructorReturn(this, (IPChatClient.__proto__ || Object.getPrototypeOf(IPChatClient)).call(this, props));
 	
+	    if (!props.tokenUrl) {
+	      throw "No url given retrieve token. Chat client will not be able to initialize.";
+	    }
 	    _this.token = props.token;
 	    _this.tokenUrl = props.tokenUrl;
 	    _this.device = props.device || "browser"; // default to "browser"
@@ -21907,6 +21956,10 @@
 	
 	var _ip_chat2 = _interopRequireDefault(_ip_chat);
 	
+	var _add_channel = __webpack_require__(177);
+	
+	var _add_channel2 = _interopRequireDefault(_add_channel);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21914,6 +21967,14 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	function announceMessage() {
+	  console.log("MESSAGE CALLBACK!");
+	}
+	
+	function announceTyping() {
+	  console.log("WHOA SOMEONES TYPING!");
+	}
 	
 	var IPChatChannelManager = function (_React$Component) {
 	  _inherits(IPChatChannelManager, _React$Component);
@@ -21924,7 +21985,12 @@
 	    var _this = _possibleConstructorReturn(this, (IPChatChannelManager.__proto__ || Object.getPrototypeOf(IPChatChannelManager)).call(this, props));
 	
 	    _this.messagingClient = props.messagingClient;
-	    _this.state = {};
+	    _this.state = {
+	      channels: null,
+	      messages: null,
+	      activeChannel: null,
+	      unreadMessageCounts: null
+	    };
 	
 	    _this._loadChannelList = _this._loadChannelList.bind(_this);
 	    _this._fetchMessages = _this._fetchMessages.bind(_this);
@@ -21957,47 +22023,77 @@
 	    value: function _fetchMessages(channels) {
 	      var channelManager = this;
 	      var messages = {};
+	      var unreadMessageCounts = {};
+	      var channelsProcessed = 0;
 	      channels.forEach(function (channel) {
 	        channel.on('messageAdded', function () {
 	          channel.getMessages().then(function (newMessages) {
 	            var allMessages = Object.assign({}, channelManager.state.messages);
 	            allMessages[channel.uniqueName] = newMessages;
-	            channelManager.setState({ messages: allMessages });
+	            unreadMessageCounts = Object.assign({}, channelManager.state.unreadMessageCounts);
+	            if (channel !== channelManager.state.activeChannel) {
+	              unreadMessageCounts[channel.uniqueName] += 1;
+	            }
+	            channelManager.setState({ messages: allMessages, unreadMessageCounts: unreadMessageCounts });
 	          });
 	        });
 	        channel.getMessages().then(function (channelMessages) {
-	          messages[channel.uniqueName] = channelMessages;
+	          channelsProcessed++;
+	          messages[channel.uniqueName] = channel.messages;
+	          unreadMessageCounts[channel.uniqueName] = channelMessages.length - 1 - channel.lastConsumedMessageIndex;
+	          if (channelsProcessed === channels.length) {
+	            var activeChannel = channels[0];
+	            activeChannel.setAllMessagesConsumed();
+	            unreadMessageCounts[activeChannel.uniqueName] = 0;
+	            channelManager.setState({
+	              messages: messages,
+	              activeChannel: channels[0],
+	              unreadMessageCounts: unreadMessageCounts
+	            });
+	          }
 	        });
 	      });
-	      this.setState({ messages: messages, activeChannel: channels[0] });
 	    }
 	  }, {
 	    key: '_changeChannel',
 	    value: function _changeChannel(uniqueName) {
 	      var channel = this.state.channels[uniqueName];
-	      this.setState({ activeChannel: channel });
+	      channel.setAllMessagesConsumed();
+	      var unreadMessageCounts = Object.assign({}, this.state.unreadMessageCounts);
+	      unreadMessageCounts[channel.uniqueName] = 0;
+	      this.setState({ activeChannel: channel, unreadMessageCounts: unreadMessageCounts });
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this3 = this;
+	      var channelManager = this;
+	      var channels = this.state.channels;
+	      var messages = this.state.messages;
+	      var activeChannel = this.state.activeChannel;
+	      var unreadMessageCounts = this.state.unreadMessageCounts;
 	
 	      var channelNames = void 0;
-	      if (this.state.channels) {
-	        var channelKeys = Object.keys(this.state.channels);
+	      if (channels) {
+	        var channelKeys = Object.keys(channels);
 	        channelNames = channelKeys.map(function (channelKey) {
-	          var channel = _this3.state.channels[channelKey];
-	          var activeStatus = _this3.state.activeChannel === channel ? " active-channel-name" : "";
+	          var channel = channels[channelKey];
+	          var activeStatus = activeChannel === channel ? " active-channel-name" : "";
+	          var messageCount = unreadMessageCounts && unreadMessageCounts[channelKey] ? unreadMessageCounts[channelKey] : "";
 	          return _react2.default.createElement(
 	            'div',
 	            {
 	              className: 'channel-manager-channel-name' + activeStatus,
 	              key: channel.sid,
 	              onClick: function onClick() {
-	                return _this3._changeChannel(channel.uniqueName);
+	                return channelManager._changeChannel(channel.uniqueName);
 	              } },
 	            _react2.default.createElement(
-	              'span',
+	              'div',
+	              { className: 'channel-name-unread-messages-container\n              ' + (messageCount === "" ? "" : 'channel-name-unread-messages') },
+	              messageCount
+	            ),
+	            _react2.default.createElement(
+	              'div',
 	              { className: 'channel-name-text' },
 	              channel.friendlyName
 	            )
@@ -22012,12 +22108,13 @@
 	      }
 	
 	      var activeChat = void 0;
-	      if (this.state.activeChannel) {
-	        var activeChannel = this.state.activeChannel;
+	      if (activeChannel && messages) {
 	        activeChat = _react2.default.createElement(_ip_chat2.default, {
 	          key: activeChannel.sid,
 	          channel: activeChannel,
-	          messages: this.state.messages[activeChannel.uniqueName]
+	          messages: messages[activeChannel.uniqueName],
+	          onMessageAdded: announceMessage,
+	          onTypingStarted: announceTyping
 	        });
 	      } else {
 	        activeChat = _react2.default.createElement(
@@ -22033,7 +22130,8 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'active-channel-manager' },
-	          channelNames
+	          channelNames,
+	          _react2.default.createElement(_add_channel2.default, null)
 	        ),
 	        activeChat
 	      );
@@ -22044,6 +22142,32 @@
 	}(_react2.default.Component);
 	
 	exports.default = IPChatChannelManager;
+
+/***/ },
+/* 177 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var AddChannel = function AddChannel(props) {
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    'Add a Channel'
+	  );
+	};
+	
+	exports.default = AddChannel;
 
 /***/ }
 /******/ ]);

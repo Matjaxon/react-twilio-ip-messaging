@@ -24,6 +24,8 @@ class IPChatChannelManager extends React.Component {
     this._loadChannelList = this._loadChannelList.bind(this);
     this._fetchMessages = this._fetchMessages.bind(this);
     this._changeChannel = this._changeChannel.bind(this);
+    this._addChannel = this._addChannel.bind(this);
+    this._subscribeChannel = this._subscribeChannel.bind(this);
   }
 
   componentWillMount() {
@@ -59,21 +61,39 @@ class IPChatChannelManager extends React.Component {
           channelManager.setState({messages: allMessages, unreadMessageCounts});
         });
       });
-      channel.getMessages().then(channelMessages => {
-        channelsProcessed ++;
-        messages[channel.uniqueName] = channel.messages;
-        unreadMessageCounts[channel.uniqueName] =
-          channelMessages.length - 1 - channel.lastConsumedMessageIndex;
-        if (channelsProcessed === channels.length) {
-          let activeChannel = channels[0];
-          activeChannel.setAllMessagesConsumed();
-          unreadMessageCounts[activeChannel.uniqueName] = 0;
-          channelManager.setState({
-            messages,
-            activeChannel: channels[0],
-            unreadMessageCounts
-          });
+      channel.join().then(joinedChannel => {
+        channel = joinedChannel;
+        channel.getMessages().then(channelMessages => {
+          channelsProcessed ++;
+          messages[channel.uniqueName] = channel.messages;
+          unreadMessageCounts[channel.uniqueName] =
+            (channel.lastConsumedMessageIndex) ?
+            channelMessages.length - 1 - channel.lastConsumedMessageIndex : 0;
+          if (channelsProcessed === channels.length) {
+            let activeChannel = channels[0];
+            activeChannel.setAllMessagesConsumed();
+            unreadMessageCounts[activeChannel.uniqueName] = 0;
+            channelManager.setState({
+              messages,
+              activeChannel: channels[0],
+              unreadMessageCounts
+            });
+          }
+        });
+      });
+    });
+  }
+
+  _subscribeChannel(channel) {
+    channel.on('messageAdded', () => {
+      channel.getMessages().then(newMessages => {
+        let allMessages = Object.assign({}, this.state.messages);
+        allMessages[channel.uniqueName] = newMessages;
+        let unreadMessageCounts = Object.assign({}, this.state.unreadMessageCounts);
+        if (channel !== this.state.activeChannel) {
+          unreadMessageCounts[channel.uniqueName] += 1;
         }
+        this.setState({messages: allMessages, unreadMessageCounts});
       });
     });
   }
@@ -84,6 +104,20 @@ class IPChatChannelManager extends React.Component {
     let unreadMessageCounts = Object.assign({}, this.state.unreadMessageCounts);
     unreadMessageCounts[channel.uniqueName] = 0;
     this.setState({activeChannel: channel, unreadMessageCounts});
+  }
+
+  _addChannel(newChannel) {
+    newChannel.join().then(joinedChannel => {
+      this._subscribeChannel(joinedChannel);
+      let channels = Object.assign({}, this.state.channels);
+      let messages = Object.assign({}, this.state.messages);
+      let unreadMessageCounts = Object.assign({}, this.state.unreadMessageCounts);
+      channels[newChannel.uniqueName] = newChannel;
+      messages[newChannel.uniqueName] = [];
+      unreadMessageCounts[newChannel.uniqueName] = 0;
+      this._subscribeChannel(joinedChannel);
+      this.setState({channels, activeChannel: newChannel});
+    });
   }
 
   render() {
@@ -140,8 +174,12 @@ class IPChatChannelManager extends React.Component {
     return (
       <div className="active-chat-container">
         <div className="active-channel-manager">
-          {channelNames}
-          <AddChannel />
+          <div className="channel-names-container">
+            {channelNames}
+          </div>
+          <AddChannel
+            messagingClient={this.messagingClient}
+            addChannel={this._addChannel}/>
         </div>
         {activeChat}
       </div>

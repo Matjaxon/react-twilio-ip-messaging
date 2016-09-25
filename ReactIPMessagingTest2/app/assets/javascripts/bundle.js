@@ -21995,6 +21995,8 @@
 	    _this._loadChannelList = _this._loadChannelList.bind(_this);
 	    _this._fetchMessages = _this._fetchMessages.bind(_this);
 	    _this._changeChannel = _this._changeChannel.bind(_this);
+	    _this._addChannel = _this._addChannel.bind(_this);
+	    _this._subscribeChannel = _this._subscribeChannel.bind(_this);
 	    return _this;
 	  }
 	
@@ -22037,20 +22039,40 @@
 	            channelManager.setState({ messages: allMessages, unreadMessageCounts: unreadMessageCounts });
 	          });
 	        });
-	        channel.getMessages().then(function (channelMessages) {
-	          channelsProcessed++;
-	          messages[channel.uniqueName] = channel.messages;
-	          unreadMessageCounts[channel.uniqueName] = channelMessages.length - 1 - channel.lastConsumedMessageIndex;
-	          if (channelsProcessed === channels.length) {
-	            var activeChannel = channels[0];
-	            activeChannel.setAllMessagesConsumed();
-	            unreadMessageCounts[activeChannel.uniqueName] = 0;
-	            channelManager.setState({
-	              messages: messages,
-	              activeChannel: channels[0],
-	              unreadMessageCounts: unreadMessageCounts
-	            });
+	        channel.join().then(function (joinedChannel) {
+	          channel = joinedChannel;
+	          channel.getMessages().then(function (channelMessages) {
+	            channelsProcessed++;
+	            messages[channel.uniqueName] = channel.messages;
+	            unreadMessageCounts[channel.uniqueName] = channel.lastConsumedMessageIndex ? channelMessages.length - 1 - channel.lastConsumedMessageIndex : 0;
+	            if (channelsProcessed === channels.length) {
+	              var activeChannel = channels[0];
+	              activeChannel.setAllMessagesConsumed();
+	              unreadMessageCounts[activeChannel.uniqueName] = 0;
+	              channelManager.setState({
+	                messages: messages,
+	                activeChannel: channels[0],
+	                unreadMessageCounts: unreadMessageCounts
+	              });
+	            }
+	          });
+	        });
+	      });
+	    }
+	  }, {
+	    key: '_subscribeChannel',
+	    value: function _subscribeChannel(channel) {
+	      var _this3 = this;
+	
+	      channel.on('messageAdded', function () {
+	        channel.getMessages().then(function (newMessages) {
+	          var allMessages = Object.assign({}, _this3.state.messages);
+	          allMessages[channel.uniqueName] = newMessages;
+	          var unreadMessageCounts = Object.assign({}, _this3.state.unreadMessageCounts);
+	          if (channel !== _this3.state.activeChannel) {
+	            unreadMessageCounts[channel.uniqueName] += 1;
 	          }
+	          _this3.setState({ messages: allMessages, unreadMessageCounts: unreadMessageCounts });
 	        });
 	      });
 	    }
@@ -22062,6 +22084,23 @@
 	      var unreadMessageCounts = Object.assign({}, this.state.unreadMessageCounts);
 	      unreadMessageCounts[channel.uniqueName] = 0;
 	      this.setState({ activeChannel: channel, unreadMessageCounts: unreadMessageCounts });
+	    }
+	  }, {
+	    key: '_addChannel',
+	    value: function _addChannel(newChannel) {
+	      var _this4 = this;
+	
+	      newChannel.join().then(function (joinedChannel) {
+	        _this4._subscribeChannel(joinedChannel);
+	        var channels = Object.assign({}, _this4.state.channels);
+	        var messages = Object.assign({}, _this4.state.messages);
+	        var unreadMessageCounts = Object.assign({}, _this4.state.unreadMessageCounts);
+	        channels[newChannel.uniqueName] = newChannel;
+	        messages[newChannel.uniqueName] = [];
+	        unreadMessageCounts[newChannel.uniqueName] = 0;
+	        _this4._subscribeChannel(joinedChannel);
+	        _this4.setState({ channels: channels, activeChannel: newChannel });
+	      });
 	    }
 	  }, {
 	    key: 'render',
@@ -22130,8 +22169,14 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'active-channel-manager' },
-	          channelNames,
-	          _react2.default.createElement(_add_channel2.default, null)
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'channel-names-container' },
+	            channelNames
+	          ),
+	          _react2.default.createElement(_add_channel2.default, {
+	            messagingClient: this.messagingClient,
+	            addChannel: this._addChannel })
 	        ),
 	        activeChat
 	      );
@@ -22147,11 +22192,13 @@
 /* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _react = __webpack_require__(1);
 	
@@ -22159,13 +22206,101 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var AddChannel = function AddChannel(props) {
-	  return _react2.default.createElement(
-	    'div',
-	    null,
-	    'Add a Channel'
-	  );
-	};
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var AddChannel = function (_React$Component) {
+	  _inherits(AddChannel, _React$Component);
+	
+	  function AddChannel(props) {
+	    _classCallCheck(this, AddChannel);
+	
+	    var _this = _possibleConstructorReturn(this, (AddChannel.__proto__ || Object.getPrototypeOf(AddChannel)).call(this, props));
+	
+	    _this.state = {
+	      channelName: ""
+	    };
+	
+	    _this.addChannel = props.addChannel;
+	    _this.messagingClient = props.messagingClient;
+	    _this._handleSubmit = _this._handleSubmit.bind(_this);
+	    _this._handleCbange = _this._handleChange.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(AddChannel, [{
+	    key: "_handleChange",
+	    value: function _handleChange(key) {
+	      var _this2 = this;
+	
+	      return function (event) {
+	        _this2.setState(_defineProperty({}, key, event.target.value));
+	      };
+	    }
+	  }, {
+	    key: "_handleSubmit",
+	    value: function _handleSubmit(event) {
+	      var _this3 = this;
+	
+	      event.preventDefault();
+	      var channelOptions = {
+	        friendlyName: this.state.channelName,
+	        isPrivate: true };
+	      var messagingClient = this.messagingClient;
+	      if (this.state.channelName.length > 0) {
+	        var uniqueName = channelOptions.friendlyName;
+	        while (uniqueName.indexOf(" ") > -1) {
+	          var idx = uniqueName.indexOf(" ");
+	          uniqueName = uniqueName.substr(0, idx) + "-" + uniqueName.substr(idx + 1);
+	        }
+	        var addString = "-";
+	        for (var i = 0; i < 10; i++) {
+	          var digit = Math.random() * 10;
+	          addString = addString + digit;
+	        }
+	        channelOptions.uniqueName = uniqueName + addString;
+	        messagingClient.createChannel(channelOptions).then(function (newChannel) {
+	          _this3.addChannel(newChannel);
+	        });
+	      }
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      return _react2.default.createElement(
+	        "div",
+	        { className: "add-channel-container" },
+	        _react2.default.createElement(
+	          "form",
+	          { onSubmit: this._handleSubmit },
+	          _react2.default.createElement("input", { type: "text",
+	            className: "add-channel-input",
+	            placeholder: "New Channel",
+	            onChange: this._handleChange("channelName")
+	          }),
+	          _react2.default.createElement(
+	            "button",
+	            {
+	              className: "add-channel-button",
+	              onClick: this._handleSubmit },
+	            _react2.default.createElement(
+	              "div",
+	              { className: "add-button-text" },
+	              "+"
+	            )
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return AddChannel;
+	}(_react2.default.Component);
 	
 	exports.default = AddChannel;
 

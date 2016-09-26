@@ -196,3 +196,18 @@
   background: #0d122b;
   padding: 3px;
 }
+
+.chat-channel-controller {
+  background-color: #f6f6f6;
+  height: 25px;
+  padding: 2px 5px;
+}
+
+.chat-channel-leave-button {
+  float: right;
+  border: 1px solid #bababa;
+  background-color: white;
+  cursor: pointer;
+  margin: 3px 7px;
+  font-size: 0.8em;
+}

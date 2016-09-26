@@ -16,8 +16,6 @@ class Api::IpMessagingController < ApplicationController
     token.add_grant grant
 
     # Generate the token and send to client
-    p identity
     render json: {identity: identity, token: token.to_jwt}, status: 200
   end
-
 end

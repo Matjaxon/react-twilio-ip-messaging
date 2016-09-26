@@ -21,6 +21,7 @@ class IPChatChannelManager extends React.Component {
     this._changeChannel = this._changeChannel.bind(this);
     this._addChannel = this._addChannel.bind(this);
     this._listenForInvites = this._listenForInvites.bind(this);
+    this._leaveChannel = this._leaveChannel.bind(this);
     this._subscribeChannel = this._subscribeChannel.bind(this);
   }
 
@@ -127,6 +128,17 @@ class IPChatChannelManager extends React.Component {
     this._addChannel(channel);
   }
 
+  _leaveChannel(channel) {
+    channel.removeAllListeners();
+    let channels = Object.assign({}, this.state.channels);
+    let messages = Object.assign({}, this.state.messages);
+    delete channels[channel.uniqueName];
+    delete messages[channel.uniqueName];
+    let channelKeys = Object.keys(channels);
+    let activeChannel = channels[channelKeys[0]] || null;
+    this.setState({channels, messages, activeChannel});
+  }
+
   render() {
     let channelManager = this;
     let channels = this.state.channels;
@@ -179,6 +191,7 @@ class IPChatChannelManager extends React.Component {
           key={activeChannel.sid}
           channel={activeChannel}
           messages={messages[activeChannel.uniqueName]}
+          leaveChannel={this._leaveChannel}
         />
       );
     } else {

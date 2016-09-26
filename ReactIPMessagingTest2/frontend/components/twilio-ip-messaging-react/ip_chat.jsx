@@ -1,6 +1,7 @@
 import React from 'react';
 import IPMessage from './ip_message';
 import InviteMember from './invite_member';
+import IPChatChannelController from './ip_chat_channel_controller';
 
 require('./ip_messaging_stylesheet.css');
 
@@ -12,6 +13,7 @@ class ChatChannel extends React.Component {
     };
     this.channel = props.channel;
     this.channelName = props.channel.friendlyName;
+    this.leaveChannel = props.leaveChannel;
 
     this.channelEventCallbacks = {
       memberJoined: props.onMemberJoined,
@@ -32,6 +34,7 @@ class ChatChannel extends React.Component {
     this._scrollToBottom = this._scrollToBottom.bind(this);
     this._fetchMessages = this._fetchMessages.bind(this);
     this._inviteMember = this._inviteMember.bind(this);
+    this._leaveChannel = this._leaveChannel.bind(this);
     this._setupEventListenersFromProps = this._setupEventListenersFromProps.bind(this);
 
     /*
@@ -79,7 +82,7 @@ class ChatChannel extends React.Component {
       if (channelEventCallbacks[channelEvent]) {
         let callback = channelEventCallbacks[channelEvent];
         channel.on(channelEvent, (defaultReturn) => {
-          callback(defaultReturn, chatChannel.state);
+          callback(event.params, chatChannel.state);
         });
       }
     });
@@ -113,6 +116,11 @@ class ChatChannel extends React.Component {
     this.channel.invite(identity);
   }
 
+  _leaveChannel() {
+    this.channel.leave();
+    this.leaveChannel(this.channel);
+  }
+
   render() {
     let messages = this.state.messages;
     let chatMessages;
@@ -137,6 +145,7 @@ class ChatChannel extends React.Component {
           </div>
           <InviteMember inviteMember={this._inviteMember}/>
         </div>
+        <IPChatChannelController leaveChannel={this._leaveChannel}/>
         <div className="channel-user-chat-window">
           {chatMessages}
         </div>

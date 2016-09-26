@@ -21,10 +21,11 @@ class InviteMember extends React.Component {
 
   _inviteMember(event) {
     event.preventDefault();
-    let memberIdentity = this.state.memberIdentity;
-    this.inviteMember(memberIdentity);
-    this.setState({memberIdentity: ""});
-
+    if (this.state.memberIdentity.length > 0) {
+      let memberIdentity = this.state.memberIdentity;
+      this.inviteMember(memberIdentity);
+      this.setState({memberIdentity: ""});
+    }
   }
 
   render() {
@@ -33,6 +34,7 @@ class InviteMember extends React.Component {
         <form onSubmit={this._inviteMember}>
           <input className="add-member-input"
             placeholder="Invite Member"
+            value={this.state.memberIdentity}
             onChange={this._handleChange("memberIdentity")} />
           <button className="add-member-button">
             <div className="add-button-text">

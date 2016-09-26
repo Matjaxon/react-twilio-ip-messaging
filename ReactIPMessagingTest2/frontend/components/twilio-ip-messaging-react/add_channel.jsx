@@ -53,6 +53,7 @@ class AddChannel extends React.Component {
           <input type="text"
             className="add-channel-input"
             placeholder="New Channel"
+            value={this.state.channelName}
             onChange={this._handleChange("channelName")}
            />
          <button

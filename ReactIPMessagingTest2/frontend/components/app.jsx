@@ -1,6 +1,5 @@
 import React from 'react';
-import ChannelUser from './ip_chat/ip_chat';
-import IPChatClient from './ip_chat/ip_chat_client';
+import IPChatClient from './twilio-ip-messaging-react/ip_chat_client';
 
 class App extends React.Component {
   constructor(props) {

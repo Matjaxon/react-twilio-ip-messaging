@@ -168,16 +168,3 @@ This will allow the the stylesheet to be required like any of the other sub-comp
 All channels are currently defaulted to private and you must add invite members.  Public channels can be created by making a `POST` to the Twilio API through a tool such as Postman.
 
 All instances will have the channel manager wrapper.  An attributes prop needs to be implemented to pass in options that should dictate whether or not the channel manager should be shown, and whether or not the user should have the ability to add channels or invite members to a channel they are currently in.
-
-## Project Planning
-
-See planning README at [docs/README.md](docs/README.md)
-
-## Future Implementations
-
-* Ability to pass in additional attributes.
-* Stand-alone implementation of chat channel with no channel manager.
-* Error handling responses (e.g. No user found).
-* Enhanced styling options passed as prop.
-* Inline styling for all elements to avoid. requirement that stylesheet be required by component.
-* Channel Admin component for service administration, including deleting channels and creation of public channels through GUI.

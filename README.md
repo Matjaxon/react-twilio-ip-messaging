@@ -1,5 +1,7 @@
 # Twilio IP Messaging React Component
 
+[Published package on npm](https://www.npmjs.com/package/twilio-ip-messaging-react)
+
 ## Overview
 
 This component provides a basic means of implementing Twilio's IP Messaging product.  After setting up the basic backend configuration to provide a token to access Twilio's API, you can use this component to create new channels and invite members to those channels.
